@@ -20,9 +20,10 @@ var app = builder.Build();
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
 using (var scope = app.Services.CreateScope())
-using (var context = scope.ServiceProvider.GetService<FitShirtDbContext>())
+await using (var context = scope.ServiceProvider.GetService<FitShirtDbContext>())
 {
     context!.Database.EnsureCreated();
+    await FitShirtDbContextSeed.LoadDataAsync(context);
 }
 
 // Configure the HTTP request pipeline.
