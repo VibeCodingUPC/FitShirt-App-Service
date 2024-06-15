@@ -23,8 +23,6 @@ public class CategoryController : ControllerBase
     {
         var query = new GetAllCategoriesQuery();
         var result = await _categoryQueryService.Handle(query);
-        
-        // TODO: Verify if list is empty
 
         return Ok(result);
     }
@@ -34,8 +32,6 @@ public class CategoryController : ControllerBase
     {
         var query = new GetCategoryByIdQuery(id);
         var result = await _categoryQueryService.Handle(query);
-        
-        // TODO: Verify category existence
 
         return Ok(result);
     }
