@@ -16,12 +16,12 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<IReadOnlyCollection<TEntity>> GetAllAsync()
     {
-        return await _context.Set<TEntity>().ToListAsync();
+        return await _context.Set<TEntity>().Where(t => t.IsEnable).ToListAsync();
     }
 
     public async Task<TEntity?> GetByIdAsync(int id)
     {
-        return await _context.Set<TEntity>().FindAsync(id);
+        return await _context.Set<TEntity>().Where(t => t.IsEnable && t.Id == id).FirstOrDefaultAsync();
     }
 
     public async Task<TEntity> SaveAsync(TEntity entity)
