@@ -15,4 +15,8 @@
       <ProjectReference Include="..\FitShirt.Domain\FitShirt.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Publishing\Exceptions\" />
+    </ItemGroup>
+
 </Project>
