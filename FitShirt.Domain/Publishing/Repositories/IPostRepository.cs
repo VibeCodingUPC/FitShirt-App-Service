@@ -5,6 +5,8 @@ namespace FitShirt.Domain.Publishing.Repositories;
 
 public interface IPostRepository : IBaseRepository<Post>
 {
-    Task<IReadOnlyCollection<Post>> GetPostsByUserId(int userId);
+    Task<Post?> GetPostByIdAsync(int id);
+    Task<IReadOnlyCollection<Post>> GetPostsByUserIdAsync(int userId);
     Task<IReadOnlyCollection<Post>> SearchByFiltersAsync (int? categoryId, int? colorId);
+    Task<Post?> GetPostByName(string name);
 }
