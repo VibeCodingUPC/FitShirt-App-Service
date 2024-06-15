@@ -1,4 +1,5 @@
 using System.Net;
+using FitShirt.Application.Shared.Exceptions;
 
 namespace FitShirt.Presentation.Errors;
 
@@ -8,6 +9,9 @@ public static class CodeErrorResponseFactory
     {
         var statusCode = exception switch
         {
+            NotFoundException => (int)HttpStatusCode.NotFound,
+            ValidationException => (int)HttpStatusCode.BadRequest,
+            ConflictException => (int)HttpStatusCode.Conflict,
             _ => (int)HttpStatusCode.InternalServerError
         };
 
