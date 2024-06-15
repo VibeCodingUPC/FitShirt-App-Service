@@ -34,6 +34,7 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IShieldRepository, ShieldRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IPostRepository, PostRepository>();
+        services.AddScoped<IPostSizeRepository, PostSizeRepository>();
         services.AddScoped<IItemRepository, ItemRepository>();
         services.AddScoped<IPurchaseRepository, PurchaseRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();

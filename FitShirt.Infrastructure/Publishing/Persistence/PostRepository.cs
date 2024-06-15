@@ -12,7 +12,19 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
     {
     }
 
-    public async Task<IReadOnlyCollection<Post>> GetPostsByUserId(int userId)
+    public async Task<Post?> GetPostByIdAsync(int id)
+    {
+        return await _context.Posts
+            .Where(post => post.IsEnable && post.Id == id)
+            .Include(post => post.Category)
+            .Include(post => post.Color)
+            .Include(post => post.User)
+            .Include(post => post.PostSizes)
+                .ThenInclude(postSize => postSize.Size)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<IReadOnlyCollection<Post>> GetPostsByUserIdAsync(int userId)
     {
         return await _context.Posts
             .Where(post => post.UserId == userId && post.IsEnable == true)
@@ -28,5 +40,12 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
                 post.IsEnable
             )
             .ToListAsync();
+    }
+
+    public async Task<Post?> GetPostByName(string name)
+    {
+        return await _context.Posts
+            .Where(post => post.Name == name)
+            .FirstOrDefaultAsync();
     }
 }
