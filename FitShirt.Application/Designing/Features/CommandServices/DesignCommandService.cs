@@ -11,7 +11,7 @@ using FitShirt.Domain.Security.Models.Aggregates;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Shared.Repositories;
 
-namespace FitShirt.Application.Designing.CommandServices;
+namespace FitShirt.Application.Designing.Features.CommandServices;
 
 public class DesignCommandService : IDesignCommandService
 {
@@ -75,7 +75,7 @@ public class DesignCommandService : IDesignCommandService
         designEntity.TertiaryColor = tertiaryColor;
 
         var designWithSameName = await _designRepository.GetDesignByName(command.Name);
-        if (designWithSameName == null)
+        if (designWithSameName != null)
         {
             throw new DuplicatedEntityAttributeException(nameof(Design), nameof(Design.Name),command.Name);
         }

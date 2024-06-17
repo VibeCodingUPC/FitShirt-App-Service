@@ -1,4 +1,3 @@
-using System.Net.Quic;
 using AutoMapper;
 using FitShirt.Application.Shared.Exceptions;
 using FitShirt.Domain.Designing.Models.Aggregates;
@@ -10,7 +9,7 @@ using FitShirt.Domain.Security.Models.Aggregates;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Shared.Models.Responses;
 
-namespace FitShirt.Application.Designing.QueryServices;
+namespace FitShirt.Application.Designing.Features.QueryServices;
 
 public class DesignQueryService : IDesignQueryService
 {

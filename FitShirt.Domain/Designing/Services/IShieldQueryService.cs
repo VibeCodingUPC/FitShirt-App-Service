@@ -6,7 +6,7 @@ namespace FitShirt.Domain.Designing.Services;
 
 public interface IShieldQueryService
 {
-    Task<IReadOnlyCollection<ShirtResponse>> Handle(GetAllShieldQuery query);
-    Task<DesignResponse?> Handle(GetShieldByIdQuery query);
+    Task<IReadOnlyCollection<ShieldResponse>> Handle(GetAllShieldQuery query);
+    Task<ShieldResponse?> Handle(GetShieldByIdQuery query);
 
 }
