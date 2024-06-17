@@ -8,7 +8,7 @@ namespace FitShirt.Presentation.Designing.Controllers;
 
 [ApiController]
 [Route("api/v1/shields")]
-[Route("application/json")]
+[Produces("application/json")]
 public class ShieldController : ControllerBase
 {
     private readonly IShieldQueryService _shieldQueryService;

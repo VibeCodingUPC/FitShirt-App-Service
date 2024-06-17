@@ -11,7 +11,7 @@ namespace FitShirt.Presentation.Designing.Controllers;
 
 [ApiController]
 [Route("api/v1/designs")]
-[Route("application/json")]
+[Produces("application/json")]
 public class DesignController : ControllerBase
 {
     private readonly IDesignCommandService _designCommandService;
