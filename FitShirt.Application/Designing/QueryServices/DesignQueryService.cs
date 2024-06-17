@@ -68,10 +68,11 @@ public class DesignQueryService : IDesignQueryService
     public async Task<IReadOnlyCollection<ShirtResponse>> Handle(GetDesignsByColorId query)
     {
         var designList = await _designRepository.GetColorByIdAsync(query.ColorId);
-        if (designList.)
+        /*if (designList.)
         {
             throw new NoEntitiesFoundException(nameof(Design));
-        }
+        }*/
+        return null;
     }
 
     public async Task<ShieldResponse?> Handle(GetShieldByIdQuery query)
