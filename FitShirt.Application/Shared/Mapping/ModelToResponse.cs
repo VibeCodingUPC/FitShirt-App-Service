@@ -1,4 +1,6 @@
 using AutoMapper;
+using FitShirt.Domain.Designing.Models.Aggregates;
+using FitShirt.Domain.Designing.Models.Responses;
 using FitShirt.Domain.Publishing.Models.Aggregates;
 using FitShirt.Domain.Publishing.Models.Entities;
 using FitShirt.Domain.Publishing.Models.Responses;
@@ -21,5 +23,7 @@ public class ModelToResponse : Profile
         CreateMap<User, UserResponse>();
         CreateMap<PostSize, PostSizeResponse>();
         CreateMap<Size, SizeResponse>();
+        CreateMap<Design, DesignResponse>();
+        CreateMap<Design, ShirtResponse>();
     }
 }

@@ -23,16 +23,6 @@ public class DesignRepository : BaseRepository<Design>, IDesignRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<Design?> GetShieldByIdAsync(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Design?> GetColorByIdAsync(int id)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<IReadOnlyCollection<Design>> GetDesignByUserIdAsync(int userId)
     {
         return await _context.Designs

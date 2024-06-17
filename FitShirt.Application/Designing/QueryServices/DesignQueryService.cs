@@ -64,26 +64,5 @@ public class DesignQueryService : IDesignQueryService
         var designListResponse = _mapper.Map<List<ShirtResponse>>(designList);
         return designListResponse;
     }
-
-    public async Task<IReadOnlyCollection<ShirtResponse>> Handle(GetDesignsByColorId query)
-    {
-        var designList = await _designRepository.GetColorByIdAsync(query.ColorId);
-        /*if (designList.)
-        {
-            throw new NoEntitiesFoundException(nameof(Design));
-        }*/
-        return null;
-    }
-
-    public async Task<ShieldResponse?> Handle(GetShieldByIdQuery query)
-    {
-        var data = await _designRepository.GetShieldByIdAsync(query.ShieldId);
-        if (data == null)
-        {
-            throw new NotFoundEntityIdException(nameof(Design), query.ShieldId);
-        }
-
-        var shieldResponse = _mapper.Map<ShieldResponse>(data);
-        return shieldResponse;
-    }
+    
 }

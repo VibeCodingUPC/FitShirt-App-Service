@@ -6,8 +6,6 @@ namespace FitShirt.Domain.Designing.Repositories;
 public interface IDesignRepository : IBaseRepository<Design>
 {
     Task<Design?> GetDesignByIdAsync(int id);
-    Task<Design?> GetShieldByIdAsync(int id);
-    Task<Design?> GetColorByIdAsync(int id);
     Task<IReadOnlyCollection<Design>> GetDesignByUserIdAsync(int userId);
     Task<Design?> GetDesignByName(string name);
 }

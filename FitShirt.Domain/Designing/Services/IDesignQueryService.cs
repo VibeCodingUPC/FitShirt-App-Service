@@ -9,6 +9,4 @@ public interface IDesignQueryService
     Task<DesignResponse?> Handle(GetDesignByIdQuery query);
     Task<IReadOnlyCollection<ShirtResponse>> Handle(GetAllDesignsQuery query);
     Task<IReadOnlyCollection<ShirtResponse>> Handle(GetDesignByUserIdQuery query);
-    Task<IReadOnlyCollection<ShirtResponse>> Handle(GetDesignsByColorId query);
-    Task<ShieldResponse?> Handle(GetShieldByIdQuery query);
 }
