@@ -1,6 +1,9 @@
+using FitShirt.Application.Designing.Features.CommandServices;
+using FitShirt.Application.Designing.Features.QueryServices;
 using FitShirt.Application.Publishing.Features.CommandServices;
 using FitShirt.Application.Publishing.Features.QueryServices;
 using FitShirt.Application.Shared.Mapping;
+using FitShirt.Domain.Designing.Services;
 using FitShirt.Domain.Publishing.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,8 +21,11 @@ public static class ApplicationServiceRegistration
         // Add services injection
         // services.AddScoped<IReservationCommandService, ReservationCommandServiceService>();
         services.AddScoped<IPostCommandService, PostCommandService>();
+        services.AddScoped<IDesignCommandService, DesignCommandService>();
         services.AddScoped<ICategoryCommandService, CategoryCommandService>();
         services.AddScoped<IPostQueryService, PostQueryService>();
+        services.AddScoped<IDesignQueryService, DesignQueryService>();
+        services.AddScoped<IShieldQueryService, ShieldQueryService>();
         services.AddScoped<ICategoryQueryService, CategoryQueryService>();
         
         return services;

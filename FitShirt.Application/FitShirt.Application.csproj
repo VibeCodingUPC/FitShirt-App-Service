@@ -16,6 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Designing\Features\" />
       <Folder Include="Publishing\Exceptions\" />
     </ItemGroup>
 

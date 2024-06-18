@@ -5,5 +5,5 @@ namespace FitShirt.Domain.Designing.Repositories;
 
 public interface IShieldRepository : IBaseRepository<Shield>
 {
-    
+    Task<Shield?> GetShieldByIdAsync(int id);
 }
