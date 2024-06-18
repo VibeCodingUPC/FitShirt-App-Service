@@ -24,6 +24,7 @@ public class FitShirtDbContext : DbContext
             switch (entry.State)
             {
                 case EntityState.Added:
+                    entry.Entity.IsEnable = true;
                     entry.Entity.CreatedAt = DateTime.Now;
                     break;
                 case EntityState.Modified:

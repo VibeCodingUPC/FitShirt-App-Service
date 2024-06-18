@@ -1,4 +1,11 @@
 using AutoMapper;
+using FitShirt.Domain.Publishing.Models.Aggregates;
+using FitShirt.Domain.Publishing.Models.Entities;
+using FitShirt.Domain.Publishing.Models.Responses;
+using FitShirt.Domain.Security.Models.Aggregates;
+using FitShirt.Domain.Security.Models.Responses;
+using FitShirt.Domain.Shared.Models.Entities;
+using FitShirt.Domain.Shared.Models.Responses;
 
 namespace FitShirt.Application.Shared.Mapping;
 
@@ -6,5 +13,13 @@ public class ModelToResponse : Profile
 {
     public ModelToResponse()
     {
+        CreateMap<Post, PostResponse>();
+        CreateMap<Post, ShirtResponse>();
+        CreateMap<Category, CategoryResponse>();
+        CreateMap<Color, ColorResponse>();
+        CreateMap<Category, CategoryResponse>();
+        CreateMap<User, UserResponse>();
+        CreateMap<PostSize, PostSizeResponse>();
+        CreateMap<Size, SizeResponse>();
     }
 }
