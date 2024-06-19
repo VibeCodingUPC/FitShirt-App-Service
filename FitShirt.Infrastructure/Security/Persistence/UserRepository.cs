@@ -11,12 +11,17 @@ public class UserRepository : BaseRepository<User>, IUserRepository
     {
     }
 
-    public Task<User?> GetUserByIdAsync(int id)
+    public Task<User?> GetUserByEmailAsync(string email)
     {
         throw new NotImplementedException();
     }
 
-    public Task<User?> GetUserByName(string name)
+    public Task<User?> GetUserByPhoneNumberAsync(string phoneNumber)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<User?> GetUserByUsernameAsync(string username)
     {
         throw new NotImplementedException();
     }
