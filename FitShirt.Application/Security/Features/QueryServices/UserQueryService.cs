@@ -35,18 +35,39 @@ public class UserQueryService : IUserQueryService
         return result;
     }
 
-    public Task<UserResponse?> Handle(GetUserByEmailQuery query)
+    public async Task<UserResponse?> Handle(GetUserByEmailQuery query)
     {
-        throw new NotImplementedException();
+        var email = await _userRepository.GetUserByName(query.email);
+        if (email == null)
+        {
+            throw new NoEntitiesFoundException(nameof(User));
+        }
+
+        var result = _mapper.Map<UserResponse>(email);
+        return result;
     }
 
-    public Task<UserResponse?> Handle(GetUserByPhoneNumberQuery query)
+    public async Task<UserResponse?> Handle(GetUserByPhoneNumberQuery query)
     {
-        throw new NotImplementedException();
+        var phoneNumber = await _userRepository.GetUserByName(query.phoneNumber);
+        if (phoneNumber == null)
+        {
+            throw new NoEntitiesFoundException(nameof(User));
+        }
+
+        var result = _mapper.Map<UserResponse>(phoneNumber);
+        return result;
     }
 
-    public Task<UserResponse?> Handle(GetUserByUsernameQuery query)
+    public async Task<UserResponse?> Handle(GetUserByUsernameQuery query)
     {
-        throw new NotImplementedException();
+        var username = await _userRepository.GetUserByName(query.username);
+        if (username == null)
+        {
+            throw new NoEntitiesFoundException(nameof(User));
+        }
+
+        var result = _mapper.Map<UserResponse>(username);
+        return result;
     }
 }
