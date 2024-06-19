@@ -5,5 +5,6 @@ namespace FitShirt.Domain.Security.Repositories;
 
 public interface IUserRepository : IBaseRepository<User>
 {
-    
+    Task<User?> GetUserByIdAsync(int id);
+    Task<User?> GetUserByName(string name);
 }
