@@ -37,7 +37,7 @@ public class UserQueryService : IUserQueryService
 
     public async Task<UserResponse?> Handle(GetUserByEmailQuery query)
     {
-        var email = await _userRepository.GetUserByName(query.email);
+        var email = await _userRepository.GetUserByEmailAsync(query.email);
         if (email == null)
         {
             throw new NoEntitiesFoundException(nameof(User));
@@ -49,7 +49,7 @@ public class UserQueryService : IUserQueryService
 
     public async Task<UserResponse?> Handle(GetUserByPhoneNumberQuery query)
     {
-        var phoneNumber = await _userRepository.GetUserByName(query.phoneNumber);
+        var phoneNumber = await _userRepository.GetUserByPhoneNumberAsync(query.phoneNumber);
         if (phoneNumber == null)
         {
             throw new NoEntitiesFoundException(nameof(User));
@@ -61,7 +61,7 @@ public class UserQueryService : IUserQueryService
 
     public async Task<UserResponse?> Handle(GetUserByUsernameQuery query)
     {
-        var username = await _userRepository.GetUserByName(query.username);
+        var username = await _userRepository.GetUserByUsernameAsync(query.username);
         if (username == null)
         {
             throw new NoEntitiesFoundException(nameof(User));
