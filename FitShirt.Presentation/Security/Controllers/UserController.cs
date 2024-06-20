@@ -8,12 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FitShirt.Presentation.Security.Controllers;
 
-/*
+
 [ApiController]
-[Route("api/v1/users")]*/
+[Route("api/v1/users")]
 public class UserController : ControllerBase
 {
-    /*
     private readonly IUserCommandService _userCommandService;
     private readonly IUserQueryService _userQueryService;
 
@@ -59,5 +58,5 @@ public class UserController : ControllerBase
         var command = new DeleteUserCommand() { Id = id };
         var result = await _userCommandService.Handle(command);
         return Ok(result);
-    }*/
+    }
 }
