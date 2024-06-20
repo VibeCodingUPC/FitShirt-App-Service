@@ -2,6 +2,7 @@ using FitShirt.Domain.Security.Models.Aggregates;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Infrastructure.Shared.Contexts;
 using FitShirt.Infrastructure.Shared.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace FitShirt.Infrastructure.Security.Persistence;
 
@@ -11,18 +12,24 @@ public class UserRepository : BaseRepository<User>, IUserRepository
     {
     }
 
-    public Task<User?> GetUserByEmailAsync(string email)
+    public async Task<User?> GetUserByEmailAsync(string email)
     {
-        throw new NotImplementedException();
+        return await _context.Users
+            .Where(user => user.Email == email && user.IsEnable == true)
+            .FirstOrDefaultAsync();
     }
 
-    public Task<User?> GetUserByPhoneNumberAsync(string phoneNumber)
+    public async Task<User?> GetUserByPhoneNumberAsync(string phoneNumber)
     {
-        throw new NotImplementedException();
+        return await _context.Users
+            .Where(user => user.Cellphone == phoneNumber && user.IsEnable == true)
+            .FirstOrDefaultAsync();
     }
 
-    public Task<User?> GetUserByUsernameAsync(string username)
+    public async Task<User?> GetUserByUsernameAsync(string username)
     {
-        throw new NotImplementedException();
+        return await _context.Users
+            .Where(user => user.Username == username && user.IsEnable == true)
+            .FirstOrDefaultAsync();
     }
 }
