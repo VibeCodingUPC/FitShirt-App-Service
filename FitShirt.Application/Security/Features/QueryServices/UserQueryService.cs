@@ -5,6 +5,7 @@ using FitShirt.Domain.Security.Models.Queries;
 using FitShirt.Domain.Security.Models.Responses;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Security.Services;
+using FitShirt.Domain.Shared.Models.Responses;
 
 namespace FitShirt.Application.Security.Features.QueryServices;
 
@@ -23,7 +24,7 @@ public class UserQueryService : IUserQueryService
         _mapper = mapper;
     }
 
-    public async Task<UserResponse?> Handle(GetAllUsersQuery query)
+    public async Task<IReadOnlyCollection<UserResponse>> Handle(GetAllUsersQuery query)
     {
         var data = await _userRepository.GetAllAsync();
         if (data.Count == 0)
@@ -31,7 +32,7 @@ public class UserQueryService : IUserQueryService
             throw new NoEntitiesFoundException(nameof(User));
         }
 
-        var result = _mapper.Map<UserResponse>(data);
+        var result = _mapper.Map<List<UserResponse>>(data);
         return result;
     }
 

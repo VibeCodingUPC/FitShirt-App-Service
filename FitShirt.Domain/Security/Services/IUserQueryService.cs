@@ -5,7 +5,7 @@ namespace FitShirt.Domain.Security.Services;
 
 public interface IUserQueryService
 {
-    Task<UserResponse?> Handle(GetAllUsersQuery query);
+    Task<IReadOnlyCollection<UserResponse>> Handle(GetAllUsersQuery query);
     Task<UserResponse?> Handle(GetUserByEmailQuery query);
     Task<UserResponse?> Handle(GetUserByPhoneNumberQuery query);
     Task<UserResponse?> Handle(GetUserByUsernameQuery query);
