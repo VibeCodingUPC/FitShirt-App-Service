@@ -5,5 +5,6 @@ namespace FitShirt.Domain.Purchasing.Repositories;
 
 public interface IItemRepository : IBaseRepository<Item>
 {
-    
+    Task<Item?> GetItemByIdAsync(int id);
 }
+    
