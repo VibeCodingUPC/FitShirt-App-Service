@@ -5,5 +5,6 @@ namespace FitShirt.Domain.Security.Repositories;
 
 public interface IServiceRepository : IBaseRepository<Service>
 {
-    
+    Task<Service?> GetFreeServiceAsync();
+    Task<Service?> GetPremiumServiceAsync();
 }
