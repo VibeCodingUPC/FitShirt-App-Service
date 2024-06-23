@@ -37,19 +37,19 @@ public class PurchaseQueryService:IPurchaseQueryService
         return purchaseResponse;
     }
 
-    public async Task<IReadOnlyCollection<ItemResponse>> Handle(GetAllPurchasesQuery query)
+    public async Task<IReadOnlyCollection<PurchaseResponse>> Handle(GetAllPurchasesQuery query)
     {
-        var data = await _purchaseRepository.GetAllAsync();
+        var data = await _purchaseRepository.GetAllPurchasesAsync();
         if (data.Count == 0)
         {
             throw new NoEntitiesFoundException(nameof(Purchase));
         }
 
-        var result = _mapper.Map<List<ItemResponse>>(data);
+        var result = _mapper.Map<List<PurchaseResponse>>(data);
         return result;
     }
 
-    public async Task<IReadOnlyCollection<ItemResponse>> Handle(GetPurchaseByUserIdQuery query)
+    public async Task<IReadOnlyCollection<PurchaseResponse>> Handle(GetPurchaseByUserIdQuery query)
     {
         var user = await _userRepository.GetByIdAsync(query.UserId);
         if (user == null)
@@ -58,7 +58,7 @@ public class PurchaseQueryService:IPurchaseQueryService
         }
 
         var purchaseList = await _purchaseRepository.GetPurchasesByUserId(query.UserId);
-        var purchaseListResponse = _mapper.Map<List<ItemResponse>>(purchaseList);
+        var purchaseListResponse = _mapper.Map<List<PurchaseResponse>>(purchaseList);
         return purchaseListResponse;
     }
 }

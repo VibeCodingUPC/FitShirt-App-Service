@@ -6,6 +6,6 @@ namespace FitShirt.Domain.Purchasing.Services;
 public interface IPurchaseQueryService
 {
     Task<PurchaseResponse?> Handle(GetPurchaseByIdQuery query);
-    Task<IReadOnlyCollection<ItemResponse>> Handle(GetAllPurchasesQuery query);
-    Task<IReadOnlyCollection<ItemResponse>> Handle(GetPurchaseByUserIdQuery query);
+    Task<IReadOnlyCollection<PurchaseResponse>> Handle(GetAllPurchasesQuery query);
+    Task<IReadOnlyCollection<PurchaseResponse>> Handle(GetPurchaseByUserIdQuery query);
 }
