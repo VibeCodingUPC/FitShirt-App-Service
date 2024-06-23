@@ -10,4 +10,5 @@ public class ItemRepository : BaseRepository<Item>, IItemRepository
     public ItemRepository(FitShirtDbContext context) : base(context)
     {
     }
+
 }

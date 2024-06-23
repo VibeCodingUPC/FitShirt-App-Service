@@ -2,11 +2,14 @@ using FitShirt.Application.Designing.Features.CommandServices;
 using FitShirt.Application.Designing.Features.QueryServices;
 using FitShirt.Application.Publishing.Features.CommandServices;
 using FitShirt.Application.Publishing.Features.QueryServices;
+using FitShirt.Application.Purchasing.Features.CommandServices;
+using FitShirt.Application.Purchasing.Features.QueryServices;
 using FitShirt.Application.Security.Features.CommandServices;
 using FitShirt.Application.Security.Features.QueryServices;
 using FitShirt.Application.Shared.Mapping;
 using FitShirt.Domain.Designing.Services;
 using FitShirt.Domain.Publishing.Services;
+using FitShirt.Domain.Purchasing.Services;
 using FitShirt.Domain.Security.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,6 +35,8 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IShieldQueryService, ShieldQueryService>();
         services.AddScoped<ICategoryQueryService, CategoryQueryService>();
         services.AddScoped<IUserQueryService, UserQueryService>();
+        services.AddScoped<IPurchaseCommandService, PurchaseCommandService>();
+        services.AddScoped<IPurchaseQueryService, PurchaseQueryService>();
         
         return services;
     }

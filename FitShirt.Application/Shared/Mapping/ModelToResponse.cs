@@ -5,6 +5,9 @@ using FitShirt.Domain.Designing.Models.Responses;
 using FitShirt.Domain.Publishing.Models.Aggregates;
 using FitShirt.Domain.Publishing.Models.Entities;
 using FitShirt.Domain.Publishing.Models.Responses;
+using FitShirt.Domain.Purchasing.Models.Aggregates;
+using FitShirt.Domain.Purchasing.Models.Entities;
+using FitShirt.Domain.Purchasing.Models.Responses;
 using FitShirt.Domain.Security.Models.Aggregates;
 using FitShirt.Domain.Security.Models.Responses;
 using FitShirt.Domain.Shared.Models.Entities;
@@ -27,5 +30,7 @@ public class ModelToResponse : Profile
         CreateMap<Design, DesignResponse>();
         CreateMap<Design, ShirtResponse>();
         CreateMap<Shield, ShieldResponse>();
+        CreateMap<Purchase, PurchaseResponse>();
+        CreateMap<Item, ItemResponse>();
     }
 }
