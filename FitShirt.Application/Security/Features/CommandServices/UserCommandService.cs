@@ -27,7 +27,21 @@ public class UserCommandService : IUserCommandService
 
     public async Task<UserResponse> Handle(LoginUserCommand command)
     {
-        throw new NotImplementedException();
+        var userInDatabase = await _userRepository.GetUserByUsernameAsync(command.Username);
+        if (userInDatabase == null)
+        {
+            throw new NotFoundEntityAttributeException(
+                nameof(User), nameof(command.Username), command.Username
+            );
+        }
+
+        if (command.Password != userInDatabase.Password)
+        {
+            throw new Exception("Incorrect password");
+        }
+
+        var userResponse = _mapper.Map<UserResponse>(userInDatabase);
+        return userResponse;
     }
 
     public async Task<UserResponse> Handle(RegisterUserCommand command)
@@ -78,19 +92,19 @@ public class UserCommandService : IUserCommandService
             throw new NotFoundEntityIdException(nameof(User), id);
         }
         var userWithSameEmail = await _userRepository.GetUserByEmailAsync(command.Email);
-        if (userWithSameEmail != null)
+        if (userWithSameEmail != null && userToUpdate.Id != userWithSameEmail.Id)
         {
             throw new DuplicatedUserEmailException(command.Email);
         }
         
         var userWithSamePhoneNumber = await _userRepository.GetUserByPhoneNumberAsync(command.Cellphone);
-        if (userWithSamePhoneNumber != null)
+        if (userWithSamePhoneNumber != null && userToUpdate.Id != userWithSamePhoneNumber.Id)
         {
             throw new DuplicatedUserCellphoneException(command.Cellphone);
         }
         
         var userWithSameUsername = await _userRepository.GetUserByUsernameAsync(command.Username);
-        if (userWithSameUsername != null)
+        if (userWithSameUsername != null && userToUpdate.Id != userWithSameUsername.Id)
         {
             throw new DuplicatedUserUsernameException(command.Username);
         }
