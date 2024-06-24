@@ -1,7 +1,6 @@
 using FitShirt.Domain.Security.Models.Commands;
 using FitShirt.Domain.Security.Models.Queries;
 using FitShirt.Domain.Security.Models.Responses;
-using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Security.Services;
 using FitShirt.Presentation.Errors;
 using Microsoft.AspNetCore.Mvc;

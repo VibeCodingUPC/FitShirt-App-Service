@@ -2,6 +2,7 @@ using FitShirt.Domain.Designing.Models.Queries;
 using FitShirt.Domain.Designing.Models.Responses;
 using FitShirt.Domain.Designing.Services;
 using FitShirt.Presentation.Errors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitShirt.Presentation.Designing.Controllers;
@@ -23,6 +24,7 @@ public class ShieldController : ControllerBase
     /// Get a shields list.
     /// </summary>
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(IReadOnlyCollection<ShieldResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
@@ -41,6 +43,7 @@ public class ShieldController : ControllerBase
     /// Get a shield by its id.
     /// </summary>
     [HttpGet("{id}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(DesignResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]

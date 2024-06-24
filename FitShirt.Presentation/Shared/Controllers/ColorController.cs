@@ -2,6 +2,7 @@ using FitShirt.Domain.Shared.Models.Queries;
 using FitShirt.Domain.Shared.Models.Responses;
 using FitShirt.Domain.Shared.Services;
 using FitShirt.Presentation.Errors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitShirt.Presentation.Shared.Controllers;
@@ -23,6 +24,7 @@ public class ColorController : ControllerBase
     /// Get a colors list.
     /// </summary>
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(IReadOnlyCollection<ColorResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
@@ -40,6 +42,7 @@ public class ColorController : ControllerBase
     /// Get a color by its id.
     /// </summary>
     [HttpGet("{id}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(ColorResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]

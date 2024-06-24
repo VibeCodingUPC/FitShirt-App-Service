@@ -3,6 +3,7 @@ using FitShirt.Domain.Publishing.Models.Queries;
 using FitShirt.Domain.Publishing.Models.Responses;
 using FitShirt.Domain.Publishing.Services;
 using FitShirt.Presentation.Errors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitShirt.Presentation.Publishing.Controllers;
@@ -26,6 +27,7 @@ public class CategoryController : ControllerBase
     /// Get a categories list.
     /// </summary>
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(IReadOnlyCollection<CategoryResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
@@ -43,6 +45,7 @@ public class CategoryController : ControllerBase
     /// Get a category by its id.
     /// </summary>
     [HttpGet("{id}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(CategoryResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]

@@ -4,6 +4,7 @@ using FitShirt.Domain.Publishing.Models.Responses;
 using FitShirt.Domain.Publishing.Services;
 using FitShirt.Domain.Shared.Models.Responses;
 using FitShirt.Presentation.Errors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitShirt.Presentation.Publishing.Controllers;
@@ -31,6 +32,7 @@ public class PostController : ControllerBase
     /// <response code="404">If there are no posts</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(IReadOnlyCollection<ShirtResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
@@ -52,6 +54,7 @@ public class PostController : ControllerBase
     /// <response code="404">If there is not any posts</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpGet("{id}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(PostResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
@@ -95,6 +98,7 @@ public class PostController : ControllerBase
     /// <response code="404">If there are no posts</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(IReadOnlyCollection<ShirtResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
