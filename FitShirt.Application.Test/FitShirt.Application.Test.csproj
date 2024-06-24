@@ -24,4 +24,13 @@
         </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Security\Features\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FitShirt.Application\FitShirt.Application.csproj" />
+      <ProjectReference Include="..\FitShirt.Domain\FitShirt.Domain.csproj" />
+    </ItemGroup>
+
 </Project>
