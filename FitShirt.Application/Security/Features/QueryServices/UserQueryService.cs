@@ -5,22 +5,17 @@ using FitShirt.Domain.Security.Models.Queries;
 using FitShirt.Domain.Security.Models.Responses;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Security.Services;
-using FitShirt.Domain.Shared.Models.Responses;
 
 namespace FitShirt.Application.Security.Features.QueryServices;
 
 public class UserQueryService : IUserQueryService
 {
     private readonly IUserRepository _userRepository;
-    private readonly IServiceRepository _serviceRepository;
-    private readonly IRoleRepository _roleRepository;
     private readonly IMapper _mapper;
 
-    public UserQueryService(IUserRepository userRepository, IServiceRepository serviceRepository, IRoleRepository roleRepository, IMapper mapper)
+    public UserQueryService(IUserRepository userRepository, IMapper mapper)
     {
         _userRepository = userRepository;
-        _serviceRepository = serviceRepository;
-        _roleRepository = roleRepository;
         _mapper = mapper;
     }
 
@@ -69,6 +64,18 @@ public class UserQueryService : IUserQueryService
         }
 
         var result = _mapper.Map<UserResponse>(username);
+        return result;
+    }
+
+    public async Task<UserResponse?> Handle(GetUserByIdQuery query)
+    {
+        var user = await _userRepository.GetDetailedUserInformationAsync(query.Id);
+        if (user == null)
+        {
+            throw new NoEntitiesFoundException(nameof(User));
+        }
+        
+        var result = _mapper.Map<UserResponse>(user);
         return result;
     }
 }

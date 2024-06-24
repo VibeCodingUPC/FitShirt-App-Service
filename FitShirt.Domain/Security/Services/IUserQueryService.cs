@@ -9,4 +9,5 @@ public interface IUserQueryService
     Task<UserResponse?> Handle(GetUserByEmailQuery query);
     Task<UserResponse?> Handle(GetUserByPhoneNumberQuery query);
     Task<UserResponse?> Handle(GetUserByUsernameQuery query);
+    Task<UserResponse?> Handle(GetUserByIdQuery query);
 }
