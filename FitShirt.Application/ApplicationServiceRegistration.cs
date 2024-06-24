@@ -41,6 +41,8 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IPurchaseQueryService, PurchaseQueryService>();
         services.AddScoped<IColorQueryService, ColorQueryService>();
         services.AddScoped<ISizeQueryService, SizeQueryService>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IEncryptService, EncryptService>();
         
         return services;
     }
