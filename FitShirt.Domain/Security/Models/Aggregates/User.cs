@@ -22,7 +22,7 @@ public class User : BaseModel
     public DebitCard? DebitCard { get; set; }
     
     public int RoleId { get; set; }
-    public Role? Role { get; set; }
+    public Role Role { get; set; }
     public int ServiceId { get; set; }
     public Service? Service { get; set; }
 

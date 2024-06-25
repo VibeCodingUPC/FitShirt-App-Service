@@ -1,4 +1,5 @@
 using FitShirt.Domain.Security.Models.Queries;
+using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Security.Services;
 using FitShirt.Presentation.Errors;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +17,7 @@ public class AuthenticationMiddleware
         _next = next;
     }
     
-    public async Task Invoke(HttpContext context,ITokenService tokenService,IUserQueryService userQueryService)
+    public async Task Invoke(HttpContext context,ITokenService tokenService, IUserRepository userRepository)
     {
         // Allow anonymus access
         var isAllowAnonymous = await IsAllowAnonymousAsync(context);
@@ -49,7 +50,7 @@ public class AuthenticationMiddleware
         
         var query = new GetUserByIdQuery(userId.Value);
 
-        var user = await userQueryService.Handle(query);
+        var user = await userRepository.GetDetailedUserInformationAsync(query.Id);
         
         if( user == null)
         {
