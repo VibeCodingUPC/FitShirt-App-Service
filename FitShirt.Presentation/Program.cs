@@ -78,7 +78,7 @@ app.UseHttpsRedirection();
 app.UseCors(builder =>
 {
     builder
-        .WithOrigins("http://localhost:5173")
+        .WithOrigins("http://localhost:5173", "https://agreeable-stone-00a8a4b10.5.azurestaticapps.net")
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials();
