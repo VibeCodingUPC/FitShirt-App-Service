@@ -41,7 +41,7 @@ public class UserCommandService : IUserCommandService
 
         if (!_encryptService.Verify(command.Password, userInDatabase.Password))
         {
-            throw new Exception("Incorrect password");
+            throw new IncorrectPasswordException();
         }
 
         var detailUser = await _userRepository.GetDetailedUserInformationAsync(userInDatabase.Id);
