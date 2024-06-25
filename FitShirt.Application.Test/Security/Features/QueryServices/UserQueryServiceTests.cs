@@ -12,22 +12,16 @@ namespace FitShirt.Application.Test.Security.Features.QueryServices;
 public class UserQueryServiceTests
 {
     private readonly Mock<IUserRepository> _userRepositoryMock;
-    private readonly Mock<IServiceRepository> _serviceRepositoryMock;
-    private readonly Mock<IRoleRepository> _roleRepositoryMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly UserQueryService _userQueryService;
 
     public UserQueryServiceTests()
     {
         _userRepositoryMock = new Mock<IUserRepository>();
-        _serviceRepositoryMock = new Mock<IServiceRepository>();
-        _roleRepositoryMock = new Mock<IRoleRepository>();
         _mapperMock = new Mock<IMapper>();
         
         _userQueryService = new UserQueryService(
             _userRepositoryMock.Object,
-            _serviceRepositoryMock.Object,
-            _roleRepositoryMock.Object,
             _mapperMock.Object
         );
     }

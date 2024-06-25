@@ -7,6 +7,7 @@ using FitShirt.Domain.Security.Models.Commands;
 using FitShirt.Domain.Security.Models.Entities;
 using FitShirt.Domain.Security.Models.Responses;
 using FitShirt.Domain.Security.Repositories;
+using FitShirt.Domain.Security.Services;
 using Moq;
 
 namespace FitShirt.Application.Test.Security.Features.CommandServices;
@@ -18,6 +19,8 @@ public class UserCommandServiceTests
     private readonly Mock<IRoleRepository> _roleRepositoryMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly UserCommandService _userCommandService;
+    private readonly Mock<IEncryptService> _encryptServiceMock;
+    private readonly Mock<ITokenService> _tokenServiceMock;
 
     public UserCommandServiceTests()
     {
@@ -25,12 +28,16 @@ public class UserCommandServiceTests
         _serviceRepositoryMock = new Mock<IServiceRepository>();
         _roleRepositoryMock = new Mock<IRoleRepository>();
         _mapperMock = new Mock<IMapper>();
+        _encryptServiceMock = new Mock<IEncryptService>();
+        _tokenServiceMock = new Mock<ITokenService>();
 
         _userCommandService = new UserCommandService(
             _userRepositoryMock.Object,
             _serviceRepositoryMock.Object,
             _roleRepositoryMock.Object,
-            _mapperMock.Object
+            _mapperMock.Object,
+            _encryptServiceMock.Object,
+            _tokenServiceMock.Object
         );
     }
     
@@ -50,15 +57,23 @@ public class UserCommandServiceTests
             Password = command.Password
         };
 
+        var detailedUser = new User();
+        var expectedToken = "generated_token";
+
         _userRepositoryMock.Setup(repo => repo.GetUserByUsernameAsync(command.Username)).ReturnsAsync(userInDatabase);
-        _mapperMock.Setup(m => m.Map<UserResponse>(userInDatabase)).Returns(new UserResponse { Username = command.Username });
+        _encryptServiceMock.Setup(service => service.Verify(command.Password, userInDatabase.Password))
+            .Returns(true);
+        _userRepositoryMock.Setup(repo => repo.GetDetailedUserInformationAsync(userInDatabase.Id))
+            .ReturnsAsync(detailedUser);
+        _tokenServiceMock.Setup(service => service.GenerateToken(detailedUser))
+            .Returns(expectedToken);
 
         // Act
         var result = await _userCommandService.Handle(command);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(command.Username, result.Username);
+        Assert.Equal(expectedToken, result);
     }
     
     [Fact]
