@@ -79,6 +79,8 @@ public class DesignCommandService : IDesignCommandService
         {
             throw new DuplicatedEntityAttributeException(nameof(Design), nameof(Design.Name),command.Name);
         }
+        designEntity.Image =
+            "https://cdn.discordapp.com/attachments/998840308617990165/1255112048505782272/camiseta-personalizada.png?ex=667bf1af&is=667aa02f&hm=978944d8cba0e7f4e4de0e9f8404ee2fce9730918ce3c61a4c2aac1f3d182a84&";
 
         await _designRepository.SaveAsync(designEntity);
 

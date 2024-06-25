@@ -46,15 +46,7 @@ public class UserCommandService : IUserCommandService
 
         var detailUser = await _userRepository.GetDetailedUserInformationAsync(userInDatabase.Id);
 
-        //if (command.Password != userInDatabase.Password)
-        //{
-        //    throw new Exception("Incorrect password");
-        //}
-
         return _tokenService.GenerateToken(detailUser!);
-        
-        // var userResponse = _mapper.Map<UserResponse>(userInDatabase);
-        // return userResponse;
     }
 
     public async Task<UserResponse> Handle(RegisterUserCommand command)

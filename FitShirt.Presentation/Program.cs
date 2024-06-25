@@ -75,6 +75,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors(builder =>
+{
+    builder
+        .WithOrigins("http://localhost:5173")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
+});
+
 app.UseAuthentication();
 
 //app.UseAuthorization();

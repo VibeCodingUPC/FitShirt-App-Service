@@ -22,6 +22,27 @@ public class UserController : ControllerBase
         _userQueryService = userQueryService;
     }
     
+    /// GET: /api/v1/users/{id}
+    /// <summary>
+    /// Get a registered user.
+    /// </summary>
+    /// <response code="200">Returns all the users</response>
+    /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
+    /// <response code="404">If there are no users registered</response>
+    /// <response code="500">If there is an internal server error</response>
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetUserByIdAsync(int id)
+    {
+        var query = new GetUserByIdQuery(id);
+        var result = await _userQueryService.Handle(query);
+        return Ok(result);
+    }
+    
     /// GET: /api/v1/users
     /// <summary>
     /// Get a created users list.
