@@ -4,6 +4,7 @@ using FitShirt.Domain.Purchasing.Models.Queries;
 using FitShirt.Domain.Purchasing.Models.Responses;
 using FitShirt.Domain.Purchasing.Services;
 using FitShirt.Presentation.Errors;
+using FitShirt.Presentation.Filter;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitShirt.Presentation.Purchasing.Controllers;
@@ -29,6 +30,8 @@ public class PurchaseController : ControllerBase
     /// </summary>
     /// <response code="200">Returns all the purchases</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
+    /// <response code="403">Not authorized</response>
     /// <response code="404">If there are no purchases</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpGet]
@@ -36,6 +39,7 @@ public class PurchaseController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize("Admin")]
     public async Task<IActionResult> GetPurchasesAsync()
     {
         var query = new GetAllPurchasesQuery();
@@ -49,6 +53,8 @@ public class PurchaseController : ControllerBase
     /// </summary>
     /// <response code="200">Returns the requested purchase</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
+    /// <response code="403">Not authorized</response>
     /// <response code="404">If the requested purchase was not found</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpGet("{id}")]
@@ -56,6 +62,7 @@ public class PurchaseController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize("Admin")]
     public async Task<IActionResult> GetPurchaseByIdAsync(int id)
     {
         var query = new GetPurchaseByIdQuery(id);
@@ -70,14 +77,17 @@ public class PurchaseController : ControllerBase
     /// </summary>
     /// <response code="200">Returns all the purchases made by the user</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
+    /// <response code="403">Not authorized</response>
     /// <response code="404">If there are no purchases by the user</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpGet]
+    [Route("search-by-user")]
     [ProducesResponseType(typeof(IReadOnlyCollection<PurchaseResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
-    [Route("search-by-user")]
+    [CustomAuthorize("Admin")]
     public async Task<IActionResult> GetPurchasesByUserIdAsync(int userId)
     {
         var query = new GetPurchaseByUserIdQuery(userId);
@@ -106,13 +116,13 @@ public class PurchaseController : ControllerBase
     ///     }
     ///
     /// </remarks>
+    /// <response code="401">Not authenticated</response>
     [HttpPost]
     [ProducesResponseType(typeof(PurchaseResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
-
     public async Task<IActionResult> PostPurchaseAsync([FromBody] CreatePurchaseCommand command)
     {
         var result = await _purchaseCommandService.Handle(command);

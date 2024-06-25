@@ -4,6 +4,7 @@ using FitShirt.Domain.Designing.Models.Responses;
 using FitShirt.Domain.Designing.Services;
 using FitShirt.Domain.Shared.Models.Responses;
 using FitShirt.Presentation.Errors;
+using FitShirt.Presentation.Filter;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitShirt.Presentation.Designing.Controllers;
@@ -29,10 +30,11 @@ public class DesignController : ControllerBase
     /// </summary>
     /// <response code="200">Returns all the posts</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
     /// <response code="404">If there are no posts</response>
     /// <response code="500">If there is an internal server error</response>
-    /// 
     [HttpGet]
+    [CustomAuthorize("Admin")]
     [ProducesResponseType(typeof(IReadOnlyCollection<ShirtResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
@@ -50,6 +52,7 @@ public class DesignController : ControllerBase
     /// </summary>
     /// <response code="200">Returns the required post</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
     /// <response code="404">If there is not any posts</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpGet("{id}")]
@@ -64,12 +67,14 @@ public class DesignController : ControllerBase
 
         return Ok(result);
     }
+    
     /// GET: /api/v1/designs/search-by-user
     /// <summary>
     /// Get a designs list by the user.
     /// </summary>
     /// <response code="200">Returns the posts made by the user</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
     /// <response code="404">If there are no posts</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpGet]
@@ -85,6 +90,7 @@ public class DesignController : ControllerBase
 
         return Ok(result);
     }
+    
     /// POST: /api/v1/designs
     /// <summary>
     /// Create a Design
@@ -105,22 +111,22 @@ public class DesignController : ControllerBase
     /// </remarks>
     /// <response code="201">If the post was successfully created</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
     /// <response code="404">If any required entity was not found</response>
     /// <response code="409">If there is any conflict</response>
     /// <response code="500">If there is an internal server error</response>
-
     [HttpPost]
     [ProducesResponseType(typeof(DesignResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
-
     public async Task<IActionResult> PostDesignAsync([FromBody] CreateDesignCommand command)
     {
         var result = await _designCommandService.Handle(command);
         return StatusCode(StatusCodes.Status201Created, result);
     }
+    
     /// PUT: /api/v1/designs/{id}
     /// <summary>
     /// Modify a Design
@@ -141,17 +147,16 @@ public class DesignController : ControllerBase
     /// </remarks>
     /// <response code="201">If the post was successfully created</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
     /// <response code="404">If any required entity was not found</response>
     /// <response code="409">If there is any conflict</response>
     /// <response code="500">If there is an internal server error</response>
-
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(DesignResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
-
     public async Task<IActionResult> PutDesignAsync(int id, [FromBody] UpdateDesignCommand command)
     {
         var result = await _designCommandService.Handle(id, command);
@@ -164,6 +169,7 @@ public class DesignController : ControllerBase
     /// </summary>
     /// <response code="200">Returns all the posts</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
     /// <response code="404">If there is no post</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpDelete("{id}")]

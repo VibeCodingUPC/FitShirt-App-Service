@@ -73,6 +73,7 @@ public class PostController : ControllerBase
     /// </summary>
     /// <response code="200">Returns the posts made by the user</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
     /// <response code="404">If there are no posts</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpGet]
@@ -136,6 +137,7 @@ public class PostController : ControllerBase
     /// </remarks>
     /// <response code="201">If the post was successfully created</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
     /// <response code="404">If any required entity was not found</response>
     /// <response code="409">If there is any conflict</response>
     /// <response code="500">If there is an internal server error</response>
@@ -175,6 +177,7 @@ public class PostController : ControllerBase
     /// </remarks>
     /// <response code="200">Returns all the posts</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
     /// <response code="404">If any required entity was not found</response>
     /// <response code="409">If there is any conflict</response>
     /// <response code="500">If there is an internal server error</response>
@@ -196,6 +199,7 @@ public class PostController : ControllerBase
     /// </summary>
     /// <response code="200">Returns all the posts</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
     /// <response code="404">If there is no post</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpDelete("{id}")]
