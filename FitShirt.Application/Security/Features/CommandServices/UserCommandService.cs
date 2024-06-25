@@ -15,17 +15,21 @@ public class UserCommandService : IUserCommandService
     private readonly IUserRepository _userRepository;
     private readonly IServiceRepository _serviceRepository;
     private readonly IRoleRepository _roleRepository;
+    private readonly IEncryptService _encryptService;
+    private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
 
-    public UserCommandService(IUserRepository userRepository, IServiceRepository serviceRepository, IRoleRepository roleRepository, IMapper mapper)
+    public UserCommandService(IUserRepository userRepository, IServiceRepository serviceRepository, IRoleRepository roleRepository, IMapper mapper, IEncryptService encryptService, ITokenService tokenService)
     {
         _userRepository = userRepository;
         _serviceRepository = serviceRepository;
         _roleRepository = roleRepository;
+        _encryptService = encryptService;
+        _tokenService = tokenService;
         _mapper = mapper;
     }
 
-    public async Task<UserResponse> Handle(LoginUserCommand command)
+    public async Task<string> Handle(LoginUserCommand command)
     {
         var userInDatabase = await _userRepository.GetUserByUsernameAsync(command.Username);
         if (userInDatabase == null)
@@ -35,19 +39,26 @@ public class UserCommandService : IUserCommandService
             );
         }
 
-        if (command.Password != userInDatabase.Password)
+        if (!_encryptService.Verify(command.Password, userInDatabase.Password))
         {
             throw new Exception("Incorrect password");
         }
 
-        var userResponse = _mapper.Map<UserResponse>(userInDatabase);
-        return userResponse;
+        var detailUser = await _userRepository.GetDetailedUserInformationAsync(userInDatabase.Id);
+
+        //if (command.Password != userInDatabase.Password)
+        //{
+        //    throw new Exception("Incorrect password");
+        //}
+
+        return _tokenService.GenerateToken(detailUser!);
+        
+        // var userResponse = _mapper.Map<UserResponse>(userInDatabase);
+        // return userResponse;
     }
 
     public async Task<UserResponse> Handle(RegisterUserCommand command)
     {
-        var userEntity = _mapper.Map<RegisterUserCommand, User>(command);
-        
         var userWithSameEmail = await _userRepository.GetUserByEmailAsync(command.Email);
         if (userWithSameEmail != null)
         {
@@ -70,12 +81,15 @@ public class UserCommandService : IUserCommandService
         {
             throw new UserLowerAgeException();
         }
+        
+        var userEntity = _mapper.Map<RegisterUserCommand, User>(command);
 
         var clientRole = await _roleRepository.GetClientRoleAsync();
         var freeService = await _serviceRepository.GetFreeServiceAsync();
         
         userEntity.RoleId = clientRole!.Id;
         userEntity.ServiceId = freeService!.Id;
+        userEntity.Password = _encryptService.Encrypt(command.Password);
 
         await _userRepository.SaveAsync(userEntity);
 
@@ -113,8 +127,9 @@ public class UserCommandService : IUserCommandService
         {
             throw new UserLowerAgeException();
         }
-
+        
         _mapper.Map(command, userToUpdate, typeof(UpdateUserCommand), typeof(User));
+        userToUpdate.Password = _encryptService.Encrypt(command.Password);
 
         await _userRepository.ModifyAsync(userToUpdate);
         var userResponse = _mapper.Map<UserResponse>(userToUpdate);

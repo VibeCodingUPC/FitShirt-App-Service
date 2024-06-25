@@ -3,6 +3,7 @@ using FitShirt.Application;
 using FitShirt.Infrastructure;
 using FitShirt.Infrastructure.Shared.Contexts;
 using FitShirt.Presentation.Middleware;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,30 @@ builder.Services.AddSwaggerGen(options =>
         Description = "FitShirt API working"
     });
     
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+    
     // using System.Reflection;
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
@@ -29,9 +54,10 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddInfrastructureService(builder.Configuration);
 builder.Services.AddApplicationServices();
 
-var app = builder.Build();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
 
-app.UseMiddleware<ErrorHandlerMiddleware>();
+var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 await using (var context = scope.ServiceProvider.GetService<FitShirtDbContext>())
@@ -49,7 +75,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseAuthentication();
+
+//app.UseAuthorization();
+
+app.UseMiddleware<ErrorHandlerMiddleware>();
+app.UseMiddleware<AuthenticationMiddleware>();
 
 app.MapControllers();
 

@@ -2,6 +2,7 @@ using FitShirt.Domain.Security.Models.Commands;
 using FitShirt.Domain.Security.Models.Responses;
 using FitShirt.Domain.Security.Services;
 using FitShirt.Presentation.Errors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitShirt.Presentation.Security.Controllers;
@@ -44,6 +45,7 @@ public class AccountController : ControllerBase
     /// <response code="500">If there is an internal server error</response>
     [HttpPost]
     [Route("register")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
@@ -76,6 +78,7 @@ public class AccountController : ControllerBase
     /// <response code="500">If there is an internal server error</response>
     [HttpPost]
     [Route("login")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
@@ -84,6 +87,6 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
     {
         var result = await _userCommandService.Handle(command);
-        return StatusCode(StatusCodes.Status201Created, result);
+        return Ok(result);
     }
 }

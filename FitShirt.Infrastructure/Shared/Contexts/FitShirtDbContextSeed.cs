@@ -143,7 +143,7 @@ public static class FitShirtDbContextSeed
                     Name = "Diego",
                     Lastname = "Defilippi",
                     Username = "Diego_DefSan",
-                    Password = "Password123",
+                    Password = "$2a$10$p3LBQP5dB7T.67zXLliMPO55Er5.EX1TsizV3fLBXCF4hxB2wGdUq",
                     Email = "ddefsan@test.com",
                     Cellphone = "999999999",
                     BirthDate = new DateOnly(2002, 10, 2),

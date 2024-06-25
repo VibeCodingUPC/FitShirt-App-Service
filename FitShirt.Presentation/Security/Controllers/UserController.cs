@@ -1,9 +1,9 @@
 using FitShirt.Domain.Security.Models.Commands;
 using FitShirt.Domain.Security.Models.Queries;
 using FitShirt.Domain.Security.Models.Responses;
-using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Security.Services;
 using FitShirt.Presentation.Errors;
+using FitShirt.Presentation.Filter;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitShirt.Presentation.Security.Controllers;
@@ -28,6 +28,7 @@ public class UserController : ControllerBase
     /// </summary>
     /// <response code="200">Returns all the users</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
     /// <response code="404">If there are no users registered</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpGet]
@@ -35,6 +36,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize("Admin")]
     public async Task<IActionResult> GetUsersAsync()
     {
         var query = new GetAllUsersQuery();
@@ -48,6 +50,7 @@ public class UserController : ControllerBase
     /// </summary>
     /// <response code="200">Returns the required user</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
     /// <response code="404">If there is not any user</response>
     /// <response code="409">If there is any conflict</response>
     /// <response code="500">If there is an internal server error</response>
@@ -70,6 +73,7 @@ public class UserController : ControllerBase
     /// </summary>
     /// <response code="200">Returns the required user</response>
     /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
     /// <response code="404">If there is not any user</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpDelete("{id}")]
