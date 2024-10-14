@@ -22,6 +22,6 @@ public class Post : BaseModel
     public ICollection<Item> Items { get; set; } = new List<Item>();
     
     public int UserId { get; set; }
-    public Seller User { get; set; }
+    public User User { get; set; }
     
 }

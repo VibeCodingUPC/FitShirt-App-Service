@@ -1,5 +1,45 @@
+# Build Folders
 bin/
 obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
+
+# User-specific files
+*.rsuser
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Auto-generated files
+*.log
+*.tlog
+*.log
+*.vspscc
+*.vssscc
+
+# Visual Studio working folder
+.vs/
+
+# Rider projects
+.idea/
+.idea/*
+
+# Resharper settings
+_ReSharper*/
+
+# Mac
+*.DS_Store
+
+# Visual Studio Code settings
+.vscode/
+
+# Package Files
+*.nupkg
+*.snupkg
+*.nuget/
+
+# Uncomment if you have Node.js dependencies
+# node_modules/
+<<<<<<< HEAD
+
+=======
+>>>>>>> feature/backend-conf-and-architecture
