@@ -3,7 +3,9 @@ using FitShirt.Application.Security.Exceptions;
 using FitShirt.Application.Shared.Exceptions;
 using FitShirt.Domain.Security.Models.Aggregates;
 using FitShirt.Domain.Security.Models.Commands;
+using FitShirt.Domain.Security.Models.Entities;
 using FitShirt.Domain.Security.Models.Responses;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Security.Services;
 
@@ -11,18 +13,15 @@ namespace FitShirt.Application.Security.Features.CommandServices;
 
 public class UserCommandService : IUserCommandService
 {
-
     private readonly IUserRepository _userRepository;
-    private readonly IServiceRepository _serviceRepository;
     private readonly IRoleRepository _roleRepository;
     private readonly IEncryptService _encryptService;
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
 
-    public UserCommandService(IUserRepository userRepository, IServiceRepository serviceRepository, IRoleRepository roleRepository, IMapper mapper, IEncryptService encryptService, ITokenService tokenService)
+    public UserCommandService(IUserRepository userRepository, IRoleRepository roleRepository, IMapper mapper, IEncryptService encryptService, ITokenService tokenService)
     {
         _userRepository = userRepository;
-        _serviceRepository = serviceRepository;
         _roleRepository = roleRepository;
         _encryptService = encryptService;
         _tokenService = tokenService;
@@ -51,6 +50,7 @@ public class UserCommandService : IUserCommandService
 
     public async Task<UserResponse> Handle(RegisterUserCommand command)
     {
+        // Verifications
         var userWithSameEmail = await _userRepository.GetUserByEmailAsync(command.Email);
         if (userWithSameEmail != null)
         {
@@ -73,18 +73,38 @@ public class UserCommandService : IUserCommandService
         {
             throw new UserLowerAgeException();
         }
-        
-        var userEntity = _mapper.Map<RegisterUserCommand, User>(command);
 
-        var clientRole = await _roleRepository.GetClientRoleAsync();
-        var freeService = await _serviceRepository.GetFreeServiceAsync();
+        UserRoles userRole;
+        if (!Enum.TryParse<UserRoles>(command.UserRole, out userRole))
+        {
+            throw new ArgumentException("Not valid user role");   
+        }
+
+        if (userRole.Equals(UserRoles.ADMIN))
+        {
+            throw new UnauthorizedAccessException("You cannot register with this role");
+        }
+
+        Role roleEntity = await _roleRepository.GetRoleByNameAsync(userRole);
         
-        userEntity.RoleId = clientRole!.Id;
-        userEntity.ServiceId = freeService!.Id;
+        // User creation
+        User userEntity = userRole switch
+        {
+            UserRoles.CLIENT => new Client(),
+            UserRoles.SELLER => new Seller(),
+            _ => throw new ArgumentException("Rol de usuario no válido"),
+        };
+
+        _mapper.Map(command, userEntity, typeof(RegisterUserCommand), typeof(User));
+
+        userEntity.Role = roleEntity!;
+        
         userEntity.Password = _encryptService.Encrypt(command.Password);
 
+        // Saving in database
         await _userRepository.SaveAsync(userEntity);
 
+        // Creating response
         var userResponse = _mapper.Map<UserResponse>(userEntity);
 
         return userResponse;
