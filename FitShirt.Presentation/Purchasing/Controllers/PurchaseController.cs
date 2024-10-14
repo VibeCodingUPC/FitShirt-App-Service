@@ -3,6 +3,7 @@ using FitShirt.Domain.Purchasing.Models.Commands;
 using FitShirt.Domain.Purchasing.Models.Queries;
 using FitShirt.Domain.Purchasing.Models.Responses;
 using FitShirt.Domain.Purchasing.Services;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Presentation.Errors;
 using FitShirt.Presentation.Filter;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +40,7 @@ public class PurchaseController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
-    [CustomAuthorize("Admin")]
+    [CustomAuthorize(UserRoles.ADMIN)]
     public async Task<IActionResult> GetPurchasesAsync()
     {
         var query = new GetAllPurchasesQuery();
@@ -62,7 +63,7 @@ public class PurchaseController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
-    [CustomAuthorize("Admin")]
+    [CustomAuthorize(UserRoles.ADMIN)]
     public async Task<IActionResult> GetPurchaseByIdAsync(int id)
     {
         var query = new GetPurchaseByIdQuery(id);
@@ -87,7 +88,7 @@ public class PurchaseController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
-    [CustomAuthorize("Admin")]
+    [CustomAuthorize(UserRoles.ADMIN)]
     public async Task<IActionResult> GetPurchasesByUserIdAsync(int userId)
     {
         var query = new GetPurchaseByUserIdQuery(userId);

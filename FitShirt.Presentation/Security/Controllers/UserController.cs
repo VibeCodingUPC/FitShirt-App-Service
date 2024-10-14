@@ -1,6 +1,7 @@
 using FitShirt.Domain.Security.Models.Commands;
 using FitShirt.Domain.Security.Models.Queries;
 using FitShirt.Domain.Security.Models.Responses;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Security.Services;
 using FitShirt.Presentation.Errors;
 using FitShirt.Presentation.Filter;
@@ -57,7 +58,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
-    [CustomAuthorize("Admin")]
+    [CustomAuthorize(UserRoles.ADMIN)]
     public async Task<IActionResult> GetUsersAsync()
     {
         var query = new GetAllUsersQuery();
