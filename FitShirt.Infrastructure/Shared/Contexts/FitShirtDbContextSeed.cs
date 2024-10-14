@@ -5,7 +5,9 @@ using FitShirt.Domain.Publishing.Models.Entities;
 using FitShirt.Domain.Purchasing.Models.Aggregates;
 using FitShirt.Domain.Security.Models.Aggregates;
 using FitShirt.Domain.Security.Models.Entities;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Shared.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace FitShirt.Infrastructure.Shared.Contexts;
@@ -18,9 +20,10 @@ public static class FitShirtDbContextSeed
         {
             if (!context.Roles.Any())
             {
-                var rolesData = File.ReadAllText("../FitShirt.Infrastructure/Shared/Data/roles.json");
-
-                var roles = JsonConvert.DeserializeObject<List<Role>>(rolesData);
+                var roles = Enum.GetValues(typeof(UserRoles))
+                    .Cast<UserRoles>()
+                    .Select(role => new Role(role))
+                    .ToList();
 
                 context.Roles.AddRange(roles!);
                 await context.SaveChangesAsync();
@@ -72,26 +75,6 @@ public static class FitShirtDbContextSeed
         }
     }
     
-    private static async Task LoadServicesDataAsync(FitShirtDbContext context)
-    {
-        try
-        {
-            if (!context.Services.Any())
-            {
-                var servicesData = File.ReadAllText("../FitShirt.Infrastructure/Shared/Data/services.json");
-
-                var services = JsonConvert.DeserializeObject<List<Service>>(servicesData);
-
-                context.Services.AddRange(services!);
-                await context.SaveChangesAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Error saving services in database");
-        }
-    }
-    
     private static async Task LoadSizesDataAsync(FitShirtDbContext context)
     {
         try
@@ -138,7 +121,10 @@ public static class FitShirtDbContextSeed
         {
             if (!context.Users.Any())
             {
-                var user = new User
+                var adminRole = await context.Roles
+                    .FirstOrDefaultAsync(r => r.Name == UserRoles.ADMIN);
+
+                var user = new Admin
                 {
                     Name = "Diego",
                     Lastname = "Defilippi",
@@ -147,11 +133,7 @@ public static class FitShirtDbContextSeed
                     Email = "ddefsan@test.com",
                     Cellphone = "999999999",
                     BirthDate = new DateOnly(2002, 10, 2),
-                    RoleId = 1,
-                    ServiceId = 1,
-                    Designs = new List<Design>(),
-                    Purchases = new List<Purchase>(),
-                    Posts = new List<Post>()
+                    RoleId = adminRole!.Id
                 };
 
                 context.Users.Add(user);
@@ -169,7 +151,6 @@ public static class FitShirtDbContextSeed
         await LoadRolesDataAsync(context);
         await LoadCategoriesDataAsync(context);
         await LoadColorsDataAsync(context);
-        await LoadServicesDataAsync(context);
         await LoadSizesDataAsync(context);
         await LoadShieldsDataAsync(context);
         await LoadUsersDataAsync(context);

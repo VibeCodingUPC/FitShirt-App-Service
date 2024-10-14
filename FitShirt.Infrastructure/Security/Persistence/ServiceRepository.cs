@@ -14,11 +14,11 @@ public class ServiceRepository : BaseRepository<Service>, IServiceRepository
 
     public async Task<Service?> GetFreeServiceAsync()
     {
-        return await _context.Services.FirstOrDefaultAsync(service => service.Name == "Free");
+        throw new NotImplementedException();
     }
 
     public async Task<Service?> GetPremiumServiceAsync()
     {
-        return await _context.Services.FirstOrDefaultAsync(service => service.Name == "Premium");
+        throw new NotImplementedException();
     }
 }
