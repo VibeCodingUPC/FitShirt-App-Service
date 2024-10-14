@@ -44,8 +44,8 @@ public class UserQueryServiceTests
         var query = new GetAllUsersQuery();
         var users = new List<User>
         {
-            new User { Id = 1, Name = "User1", Email = "user1@example.com" },
-            new User { Id = 2, Name = "User2", Email = "user2@example.com" }
+            new Client { Id = 1, Name = "User1", Email = "user1@example.com" },
+            new Client { Id = 2, Name = "User2", Email = "user2@example.com" }
         };
         var userResponses = new List<UserResponse>
         {
@@ -80,7 +80,7 @@ public class UserQueryServiceTests
     {
         // Arrange
         var query = new GetUserByEmailQuery ("user@example.com");
-        var user = new User { Id = 1, Name = "User", Email = "user@example.com" };
+        var user = new Client { Id = 1, Name = "User", Email = "user@example.com" };
         var userResponse = new UserResponse { Id = 1, Name = "User", Email = "user@example.com" };
         _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(query.email)).ReturnsAsync(user);
         _mapperMock.Setup(m => m.Map<UserResponse>(user)).Returns(userResponse);
@@ -109,7 +109,7 @@ public class UserQueryServiceTests
     {
         // Arrange
         var query = new GetUserByPhoneNumberQuery ("1234567890");
-        var user = new User { Id = 1, Name = "User", Cellphone = "1234567890" };
+        var user = new Client { Id = 1, Name = "User", Cellphone = "1234567890" };
         var userResponse = new UserResponse { Id = 1, Name = "User", Cellphone = "1234567890" };
         _userRepositoryMock.Setup(repo => repo.GetUserByPhoneNumberAsync(query.phoneNumber)).ReturnsAsync(user);
         _mapperMock.Setup(m => m.Map<UserResponse>(user)).Returns(userResponse);
@@ -138,7 +138,7 @@ public class UserQueryServiceTests
     {
         // Arrange
         var query = new GetUserByUsernameQuery("existinguser");
-        var user = new User { Id = 1, Name = "User", Username = "existinguser" };
+        var user = new Client { Id = 1, Name = "User", Username = "existinguser" };
         var userResponse = new UserResponse { Id = 1, Name = "User", Username = "existinguser" };
         _userRepositoryMock.Setup(repo => repo.GetUserByUsernameAsync(query.username)).ReturnsAsync(user);
         _mapperMock.Setup(m => m.Map<UserResponse>(user)).Returns(userResponse);

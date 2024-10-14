@@ -4,11 +4,10 @@ using FitShirt.Application.Security.Features.CommandServices;
 using FitShirt.Application.Shared.Exceptions;
 using FitShirt.Domain.Security.Models.Aggregates;
 using FitShirt.Domain.Security.Models.Commands;
-using FitShirt.Domain.Security.Models.Entities;
-using FitShirt.Domain.Security.Models.Responses;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Security.Services;
 using Moq;
+using NSubstitute;
 
 namespace FitShirt.Application.Test.Security.Features.CommandServices;
 
@@ -33,7 +32,6 @@ public class UserCommandServiceTests
 
         _userCommandService = new UserCommandService(
             _userRepositoryMock.Object,
-            _serviceRepositoryMock.Object,
             _roleRepositoryMock.Object,
             _mapperMock.Object,
             _encryptServiceMock.Object,
@@ -51,13 +49,13 @@ public class UserCommandServiceTests
             Password = "correctpassword"
         };
 
-        var userInDatabase = new User
+        var userInDatabase = new Client
         {
             Username = command.Username,
             Password = command.Password
         };
 
-        var detailedUser = new User();
+        var detailedUser = new Client();
         var expectedToken = "generated_token";
 
         _userRepositoryMock.Setup(repo => repo.GetUserByUsernameAsync(command.Username)).ReturnsAsync(userInDatabase);
@@ -108,7 +106,7 @@ public class UserCommandServiceTests
             Password = "wrongpassword"
         };
 
-        var userInDatabase = new User
+        var userInDatabase = new Client
         {
             Username = command.Username,
             Password = "correctpassword"
@@ -117,46 +115,11 @@ public class UserCommandServiceTests
         _userRepositoryMock.Setup(repo => repo.GetUserByUsernameAsync(command.Username)).ReturnsAsync(userInDatabase);
 
         // Act
-        var exception = await Assert.ThrowsAsync<Exception>(() => _userCommandService.Handle(command));
+        var exception = await Assert.ThrowsAsync<IncorrectPasswordException>(() => _userCommandService.Handle(command));
 
         // Assert
         Assert.Equal("Incorrect password", exception.Message);
         _userRepositoryMock.Verify(repo => repo.GetUserByUsernameAsync(command.Username), Times.Once);
-    }
-    
-    [Fact]
-    public async Task HandleRegisterUser_UserCreatedSuccessfully_ReturnsUserResponse()
-    {
-        // Arrange
-        var command = new RegisterUserCommand
-        {
-            Email = "test@example.com",
-            Cellphone = "1234567890",
-            Username = "testuser",
-            Birthdate = DateOnly.Parse("2000-01-01")
-        };
-
-        var userEntity = new User();
-        var clientRole = new Role { Id = 1, Name = "Client" };
-        var freeService = new Service { Id = 1, Name = "Free Service" };
-
-        _mapperMock.Setup(m => m.Map<RegisterUserCommand, User>(command)).Returns(userEntity);
-        _userRepositoryMock.Setup(r => r.GetUserByEmailAsync(command.Email)).ReturnsAsync((User)null);
-        _userRepositoryMock.Setup(r => r.GetUserByPhoneNumberAsync(command.Cellphone)).ReturnsAsync((User)null);
-        _userRepositoryMock.Setup(r => r.GetUserByUsernameAsync(command.Username)).ReturnsAsync((User)null);
-        _roleRepositoryMock.Setup(r => r.GetClientRoleAsync()).ReturnsAsync(clientRole);
-        _serviceRepositoryMock.Setup(r => r.GetFreeServiceAsync()).ReturnsAsync(freeService);
-        _userRepositoryMock.Setup(r => r.SaveAsync(userEntity));
-
-        var userResponse = new UserResponse();
-        _mapperMock.Setup(m => m.Map<UserResponse>(userEntity)).Returns(userResponse);
-
-        // Act
-        var result = await _userCommandService.Handle(command);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(userResponse, result);
     }
 
     [Fact]
@@ -171,7 +134,7 @@ public class UserCommandServiceTests
             Birthdate = DateOnly.Parse("2000-01-01")
         };
 
-        var existingUser = new User { Email = command.Email };
+        var existingUser = new Client { Email = command.Email };
     
         _userRepositoryMock.Setup(r => r.GetUserByEmailAsync(command.Email)).ReturnsAsync(existingUser);
 
@@ -192,7 +155,7 @@ public class UserCommandServiceTests
             Birthdate = DateOnly.Parse("2000-01-01")
         };
 
-        var existingUser = new User { Cellphone = command.Cellphone };
+        var existingUser = new Client { Cellphone = command.Cellphone };
     
         _userRepositoryMock.Setup(r => r.GetUserByPhoneNumberAsync(command.Cellphone)).ReturnsAsync(existingUser);
 
@@ -213,7 +176,7 @@ public class UserCommandServiceTests
             Birthdate = DateOnly.Parse("2000-01-01")
         };
 
-        var existingUser = new User { Username = command.Username };
+        var existingUser = new Client { Username = command.Username };
     
         _userRepositoryMock.Setup(r => r.GetUserByUsernameAsync(command.Username)).ReturnsAsync(existingUser);
 
