@@ -20,6 +20,6 @@ public class Design : BaseModel
     public Color TertiaryColor { get; set; }
     
     public int UserId { get; set; }
-    public User User { get; set; }
+    public Client User { get; set; }
     
 }

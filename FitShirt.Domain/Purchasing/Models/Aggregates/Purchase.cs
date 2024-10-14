@@ -8,7 +8,7 @@ public class Purchase : BaseModel
 {
     public DateTime PurchaseDate { get; set; }
     public int UserId { get; set; }
-    public User User { get; set; }
+    public Client User { get; set; }
     
     public ICollection<Item> Items { get; set; }
 }
