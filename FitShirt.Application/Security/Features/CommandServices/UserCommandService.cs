@@ -83,7 +83,7 @@ public class UserCommandService : IUserCommandService
         Role roleEntity = await _roleRepository.GetRoleByNameAsync(userRole);
         
         // User creation
-        User userEntity = userRole switch
+        User userEntity = roleEntity!.Name switch
         {
             UserRoles.CLIENT => new Client(),
             UserRoles.SELLER => new Seller(),

@@ -34,6 +34,5 @@ public class RegisterUserCommand
     public string Cellphone { get; set; } = null!;
 
     [Required(ErrorMessage = "User role is required")]
-    [StringLength(16, ErrorMessage = "Role must be at most 16 characters")]
     public string UserRole { get; set; } = null!;
 }
