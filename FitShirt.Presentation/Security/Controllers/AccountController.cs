@@ -29,8 +29,8 @@ public class AccountController : ControllerBase
     ///     {
     ///        "name": "Diego",
     ///        "lastname": "Defilippi",
-    ///        "birthdate": "2002-10-02",
     ///        "username": "Diegos",
+    ///        "role": "CLIENT" or "SELLER"
     ///        "password": "123456789",
     ///        "confirmPassword": "123456789",
     ///        "email": "ddefsan@test.com",

@@ -12,9 +12,6 @@ public class RegisterUserCommand
     [StringLength(32, ErrorMessage = "Lastname must be between at most 32 characters")]
     public string Lastname { get; set; } = null!;
     
-    [Required(ErrorMessage = "Birthdate is required")]
-    public DateOnly Birthdate { get; set; }
-    
     [Required(ErrorMessage = "Username is required")]
     [StringLength(16, ErrorMessage = "Username must be between 6 and 16 characters", MinimumLength = 6)]
     public string Username { get; set; } = null!;

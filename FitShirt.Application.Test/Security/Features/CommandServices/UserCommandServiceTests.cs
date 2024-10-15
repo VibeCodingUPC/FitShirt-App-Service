@@ -131,7 +131,6 @@ public class UserCommandServiceTests
             Email = "duplicate@example.com",
             Cellphone = "1234567890",
             Username = "testuser",
-            Birthdate = DateOnly.Parse("2000-01-01")
         };
 
         var existingUser = new Client { Email = command.Email };
@@ -152,7 +151,6 @@ public class UserCommandServiceTests
             Email = "test@example.com",
             Cellphone = "duplicatePhone",
             Username = "testuser",
-            Birthdate = DateOnly.Parse("2000-01-01")
         };
 
         var existingUser = new Client { Cellphone = command.Cellphone };
@@ -173,7 +171,6 @@ public class UserCommandServiceTests
             Email = "test@example.com",
             Cellphone = "1234567890",
             Username = "duplicateUsername",
-            Birthdate = DateOnly.Parse("2000-01-01")
         };
 
         var existingUser = new Client { Username = command.Username };
@@ -183,21 +180,5 @@ public class UserCommandServiceTests
         // Act & Assert
         var exception = await Assert.ThrowsAsync<DuplicatedUserUsernameException>(() => _userCommandService.Handle(command));
         Assert.Equal(command.Username, exception.AttributeValue);
-    }
-    
-    [Fact]
-    public async Task HandleRegisterUser_AgeLowerThan18_ThrowsUserLowerAgeException()
-    {
-        // Arrange
-        var command = new RegisterUserCommand
-        {
-            Email = "test@example.com",
-            Cellphone = "1234567890",
-            Username = "testuser",
-            Birthdate = DateOnly.Parse("2010-01-01")
-        };
-
-        // Act & Assert
-        await Assert.ThrowsAsync<UserLowerAgeException>(() => _userCommandService.Handle(command));
     }
 }

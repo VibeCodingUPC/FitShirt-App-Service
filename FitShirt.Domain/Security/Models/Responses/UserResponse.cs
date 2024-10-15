@@ -8,5 +8,4 @@ public class UserResponse
     public string Username { get; set; }
     public string Email { get; set; }
     public string Cellphone { get; set; }
-    public DateOnly BirthDate { get; set; }
 }

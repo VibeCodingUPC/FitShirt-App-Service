@@ -68,11 +68,6 @@ public class UserCommandService : IUserCommandService
         {
             throw new DuplicatedUserUsernameException(command.Username);
         }
-        
-        if (IsAgeLowerThan18(command.Birthdate))
-        {
-            throw new UserLowerAgeException();
-        }
 
         UserRoles userRole;
         if (!Enum.TryParse<UserRoles>(command.UserRole, out userRole))
@@ -134,12 +129,7 @@ public class UserCommandService : IUserCommandService
         {
             throw new DuplicatedUserUsernameException(command.Username);
         }
-        
-        if (IsAgeLowerThan18(command.Birthdate))
-        {
-            throw new UserLowerAgeException();
-        }
-        
+
         _mapper.Map(command, userToUpdate, typeof(UpdateUserCommand), typeof(User));
         userToUpdate.Password = _encryptService.Encrypt(command.Password);
 
@@ -158,18 +148,5 @@ public class UserCommandService : IUserCommandService
         }
 
         return await _userRepository.DeleteAsync(command.Id);
-    }
-
-    private bool IsAgeLowerThan18(DateOnly birthDate)
-    {
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var age = today.Year - birthDate.Year;
-        
-        if (birthDate > today.AddYears(-age))
-        {
-            age--;
-        }
-
-        return age < 18;
     }
 }
