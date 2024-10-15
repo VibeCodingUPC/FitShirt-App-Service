@@ -38,7 +38,6 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         return await _context.Users
             .Where(user => user.Id == id && user.IsEnable)
             .Include(user => user.Role)
-            .Include(user => user.Service)
             .FirstOrDefaultAsync();
     }
 }

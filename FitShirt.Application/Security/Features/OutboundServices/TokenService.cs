@@ -6,13 +6,11 @@ using FitShirt.Domain.Security.Services;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace FitShirt.Application.Security.Features.CommandServices;
+namespace FitShirt.Application.Security.Features.OutboundServices;
 
 public class TokenService : ITokenService
 {
     private readonly string _key = "681fcdef-f04e-4c0c-b91f-977c55b92b56";
-    //private readonly string _issuer = "FitShirt_System";
-    //private readonly string _audience = "FitShirt_Users";
     private readonly int _durationInMinutes = 360;
 
     public string GenerateToken(User user)
@@ -25,19 +23,15 @@ public class TokenService : ITokenService
             new Claim(CustomClaimTypes.Username, user.Username),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.PhoneNumber, user.Cellphone),
-            new Claim(CustomClaimTypes.Birthdate, user.BirthDate.ToString()),
-            new Claim(CustomClaimTypes.Role, user.Role!.Name),
-            new Claim(CustomClaimTypes.Service, user.Service!.Name),
+            new Claim(CustomClaimTypes.Role, user.Role.GetStringName())
         });
-        
+
         var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_key));
         var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
-        
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = claims,
-            //Issuer = _jwtSettings.Issuer,
-            //Audience = _jwtSettings.Audience,
             Expires = DateTime.UtcNow.AddMinutes(_durationInMinutes),
             SigningCredentials = signingCredentials
         };
@@ -53,7 +47,7 @@ public class TokenService : ITokenService
         if (string.IsNullOrEmpty(token))
             // Return null 
             return null;
-        
+
         // Otherwise, perform validation
         var tokenHandler = new JsonWebTokenHandler();
         var key = Encoding.ASCII.GetBytes(_key);

@@ -60,7 +60,7 @@ public class PostCommandServiceTests
         };
 
         var postEntity = new Post();
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User" };
         var category = new Category { Id = 1, Name = "Test Category" };
         var color = new Color { Id = 1, Name = "Test Color" };
         var size1 = new Size { Id = 1, Value = "Size 1" };
@@ -111,7 +111,7 @@ public class PostCommandServiceTests
         };
 
         _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId))
-            .ReturnsAsync((User)null);
+            .ReturnsAsync((Seller)null);
 
         // Act
         var exception = await Assert.ThrowsAsync<NotFoundEntityIdException>(() => _postCommandService.Handle(command));
@@ -134,7 +134,7 @@ public class PostCommandServiceTests
             SizeIds = new List<int> { 1, 2 }
         };
 
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User" };
 
         _mapperMock.Setup(m => m.Map<CreatePostCommand, Post>(command)).Returns(new Post());
         _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId)).ReturnsAsync(user);
@@ -161,7 +161,7 @@ public class PostCommandServiceTests
             SizeIds = new List<int> { 1, 2 }
         };
 
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User" };
         var category = new Category { Id = 1, Name = "Test Category" };
 
         _mapperMock.Setup(m => m.Map<CreatePostCommand, Post>(command)).Returns(new Post());
@@ -190,7 +190,7 @@ public class PostCommandServiceTests
             SizeIds = new List<int> { 1, 2 }
         };
 
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User" };
         var category = new Category { Id = 1, Name = "Test Category" };
         var color = new Color { Id = 1, Name = "Test Color" };
         var size1 = new Size { Id = 1, Value = "Size 1" };
@@ -223,7 +223,7 @@ public class PostCommandServiceTests
             SizeIds = new List<int> { 1, 2 }
         };
 
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User" };
         var category = new Category { Id = 1, Name = "Test Category" };
         var color = new Color { Id = 1, Name = "Test Color" };
         var size1 = new Size { Id = 1, Value = "Size 1" };
@@ -262,7 +262,7 @@ public class PostCommandServiceTests
         };
 
         var postToUpdate = new Post { Id = id, Name = "Original Post" };
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Client { Id = 1, Name = "Test User" };
         var category = new Category { Id = 1, Name = "Test Category" };
         var color = new Color { Id = 1, Name = "Test Color" };
         var size1 = new Size { Id = 1, Value = "Size 1" };
@@ -364,7 +364,7 @@ public class PostCommandServiceTests
         };
 
         var postToUpdate = new Post { Id = id, Name = "Original Post" };
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User" };
 
         _postRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(postToUpdate);
         _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId)).ReturnsAsync(user);
@@ -391,7 +391,7 @@ public class PostCommandServiceTests
         };
 
         var postToUpdate = new Post { Id = id, Name = "Original Post" };
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User" };
         var category = new Category { Id = 1, Name = "Test Category" };
 
         _postRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(postToUpdate);
@@ -420,7 +420,7 @@ public class PostCommandServiceTests
         };
 
         var postToUpdate = new Post { Id = id, Name = "Original Post" };
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User" };
         var category = new Category { Id = 1, Name = "Test Category" };
         var color = new Color { Id = 1, Name = "Test Color" };
         var size1 = new Size { Id = 1, Value = "Size 1" };
@@ -453,7 +453,7 @@ public class PostCommandServiceTests
         };
 
         var postToUpdate = new Post { Id = id, Name = "Original Post" };
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User" };
         var category = new Category { Id = 1, Name = "Test Category" };
         var color = new Color { Id = 1, Name = "Test Color" };
         var size1 = new Size { Id = 1, Value = "Size 1" };

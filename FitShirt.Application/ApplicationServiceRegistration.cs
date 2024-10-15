@@ -5,6 +5,7 @@ using FitShirt.Application.Publishing.Features.QueryServices;
 using FitShirt.Application.Purchasing.Features.CommandServices;
 using FitShirt.Application.Purchasing.Features.QueryServices;
 using FitShirt.Application.Security.Features.CommandServices;
+using FitShirt.Application.Security.Features.OutboundServices;
 using FitShirt.Application.Security.Features.QueryServices;
 using FitShirt.Application.Shared.Features.QueryServices;
 using FitShirt.Application.Shared.Mapping;

@@ -24,7 +24,11 @@ public class ModelToResponse : Profile
         CreateMap<Category, CategoryResponse>();
         CreateMap<Color, ColorResponse>();
         CreateMap<Category, CategoryResponse>();
-        CreateMap<User, UserResponse>();
+        CreateMap<User, UserResponse>()
+            .AfterMap((u, ur) =>
+            {
+                ur.Role = u.Role.GetStringName();
+            });
         CreateMap<PostSize, PostSizeResponse>();
         CreateMap<Size, SizeResponse>();
         CreateMap<Design, DesignResponse>();

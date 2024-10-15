@@ -107,7 +107,7 @@ public class PurchaseQueryServiceTests
     {
         // Arrange
         var query = new GetPurchaseByUserIdQuery(1);
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Client { Id = 1, Name = "Test User" };
         var purchases = new List<Purchase> { new Purchase { Id = 1 }, new Purchase { Id = 2 } };
         var purchaseResponses = new List<PurchaseResponse> { new PurchaseResponse { Id = 1 }, new PurchaseResponse { Id = 2 } };
 

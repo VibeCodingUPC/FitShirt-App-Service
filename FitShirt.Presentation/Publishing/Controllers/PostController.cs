@@ -2,8 +2,10 @@ using FitShirt.Domain.Publishing.Models.Commands;
 using FitShirt.Domain.Publishing.Models.Queries;
 using FitShirt.Domain.Publishing.Models.Responses;
 using FitShirt.Domain.Publishing.Services;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Shared.Models.Responses;
 using FitShirt.Presentation.Errors;
+using FitShirt.Presentation.Filter;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -147,6 +149,7 @@ public class PostController : ControllerBase
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.SELLER)]
     public async Task<IActionResult> PostPostAsync([FromBody] CreatePostCommand command)
     {
         var result = await _postCommandService.Handle(command);
@@ -187,6 +190,7 @@ public class PostController : ControllerBase
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.SELLER)]
     public async Task<IActionResult> PutPostAsync(int id, [FromBody] UpdatePostCommand command)
     {
         var result = await _postCommandService.Handle(id, command);
@@ -207,6 +211,7 @@ public class PostController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.SELLER)]
     public async Task<IActionResult> DeletePostAsync(int id)
     {
         var command = new DeletePostCommand { Id = id };

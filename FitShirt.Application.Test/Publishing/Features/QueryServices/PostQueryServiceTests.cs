@@ -126,7 +126,7 @@ public class PostQueryServiceTests
     {
         // Arrange
         var query = new GetPostsByUserIdQuery(1);
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User" };
         var postList = new List<Post>
         {
             new Post { Id = 1, Name = "Post 1" },

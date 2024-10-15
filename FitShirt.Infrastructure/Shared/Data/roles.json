@@ -1,8 +1,11 @@
 [
   {
-    "name": "Admin"
+    "name": "ADMIN"
   },
   {
-    "name": "Client"
+    "name": "CLIENT"
+  },
+  {
+    "name":  "SELLER"
   }
 ]

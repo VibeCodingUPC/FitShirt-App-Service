@@ -1,6 +1,6 @@
 using FitShirt.Domain.Security.Services;
 
-namespace FitShirt.Application.Security.Features.CommandServices;
+namespace FitShirt.Application.Security.Features.OutboundServices;
 
 public class EncryptService : IEncryptService
 {

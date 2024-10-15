@@ -56,7 +56,7 @@ public class PurchaseCommandServiceTests
             }
         };
 
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Client { Id = 1, Name = "Test User" };
         var post = new Post { Id = 1, Stock = 10 };
         var size = new Size { Id = 1, Value = "L" };
         var purchaseEntity = new Purchase { UserId = 1, Items = new List<Item>(), PurchaseDate = DateTime.Now };
@@ -116,7 +116,7 @@ public class PurchaseCommandServiceTests
             }
         };
         
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Client { Id = 1, Name = "Test User" };
         _userRepositoryMock.Setup(repo => repo.GetByIdAsync(command.UserId)).ReturnsAsync(user);
         _postRepositoryMock.Setup(repo => repo.GetByIdAsync(It.IsAny<int>()));
 
@@ -141,7 +141,7 @@ public class PurchaseCommandServiceTests
             }
         };
 
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Client { Id = 1, Name = "Test User" };
         var post = new Post { Id = 1, Stock = 10 };
         _userRepositoryMock.Setup(repo => repo.GetByIdAsync(command.UserId)).ReturnsAsync(user);
         _postRepositoryMock.Setup(repo => repo.GetByIdAsync(command.Items[0].PostId)).ReturnsAsync(post);
@@ -167,7 +167,7 @@ public class PurchaseCommandServiceTests
             }
         };
 
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Client { Id = 1, Name = "Test User" };
         var post = new Post { Id = 1, Stock = 10 };
         var size = new Size { Id = 1, Value = "L" };
 
