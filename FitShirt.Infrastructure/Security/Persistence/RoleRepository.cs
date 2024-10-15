@@ -35,6 +35,8 @@ public class RoleRepository : BaseRepository<Role>, IRoleRepository
 
     public async Task<Role?> GetRoleByNameAsync(UserRoles roleName)
     {
-        return await _context.Roles.FirstOrDefaultAsync(r => r.Name.Equals(roleName.ToString()));
+        return await _context.Roles
+            .Where(r => r.Name == roleName)
+            .FirstOrDefaultAsync();
     }
 }
