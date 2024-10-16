@@ -17,6 +17,7 @@ public class PurchaseRepository : BaseRepository<Purchase>, IPurchaseRepository
         return await _context.Purchases
             .Where(purchase => purchase.IsEnable && purchase.UserId == userId)
             .Include(purchase => purchase.User)
+                .ThenInclude(user => user.Role)
             .Include(purchase => purchase.Items)
             .ThenInclude(item => item.Size)
             .Include(purchase => purchase.Items)
@@ -41,6 +42,7 @@ public class PurchaseRepository : BaseRepository<Purchase>, IPurchaseRepository
         return await _context.Purchases
             .Where(purchase => purchase.IsEnable && purchase.Id == id)
             .Include(purchase => purchase.User)
+                .ThenInclude(user => user.Role)
             .Include(purchase => purchase.Items)
             .ThenInclude(item => item.Size)
             .Include(purchase => purchase.Items)

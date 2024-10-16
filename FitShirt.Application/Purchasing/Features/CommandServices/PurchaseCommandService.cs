@@ -10,6 +10,7 @@ using FitShirt.Domain.Purchasing.Models.Responses;
 using FitShirt.Domain.Purchasing.Repositories;
 using FitShirt.Domain.Purchasing.Services;
 using FitShirt.Domain.Security.Models.Aggregates;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Shared.Models.Entities;
 using FitShirt.Domain.Shared.Repositories;
@@ -42,10 +43,14 @@ public class PurchaseCommandService:IPurchaseCommandService
         
         purchaseEntity.PurchaseDate = DateTime.Now;
 
-        var user = await _userRepository.GetByIdAsync(command.UserId);
+        var user = await _userRepository.GetDetailedUserInformationAsync(command.UserId);
         if (user == null)
         {
             throw new NotFoundEntityIdException(nameof(User), command.UserId);
+        }
+        if (user.Role.Name == UserRoles.SELLER)
+        {
+            throw new ArgumentException("Sellers are not allowed to create purchases");
         }
         purchaseEntity.User = user;
         

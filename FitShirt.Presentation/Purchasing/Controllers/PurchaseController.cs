@@ -88,7 +88,7 @@ public class PurchaseController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
-    [CustomAuthorize(UserRoles.ADMIN)]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.CLIENT)]
     public async Task<IActionResult> GetPurchasesByUserIdAsync(int userId)
     {
         var query = new GetPurchaseByUserIdQuery(userId);
@@ -124,6 +124,7 @@ public class PurchaseController : ControllerBase
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.CLIENT)]
     public async Task<IActionResult> PostPurchaseAsync([FromBody] CreatePurchaseCommand command)
     {
         var result = await _purchaseCommandService.Handle(command);
