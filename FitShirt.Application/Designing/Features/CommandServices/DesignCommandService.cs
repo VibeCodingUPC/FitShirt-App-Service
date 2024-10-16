@@ -8,6 +8,7 @@ using FitShirt.Domain.Designing.Models.Responses;
 using FitShirt.Domain.Designing.Repositories;
 using FitShirt.Domain.Designing.Services;
 using FitShirt.Domain.Security.Models.Aggregates;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Shared.Repositories;
 
@@ -34,12 +35,15 @@ public class DesignCommandService : IDesignCommandService
     {
         var designEntity = _mapper.Map<CreateDesignCommand, Design>(command);
 
-        var user = await _userRepository.GetByIdAsync(command.UserId);
+        var user = await _userRepository.GetDetailedUserInformationAsync(command.UserId);
         if (user == null)
         {
             throw new NotFoundEntityIdException(nameof(User), command.UserId);
         }
-
+        if (user.Role.Name == UserRoles.SELLER)
+        {
+            throw new ArgumentException("Sellers are not allowed to create designs");
+        }
         designEntity.User = user;
 
         var shield = await _shieldRepository.GetByIdAsync(command.ShieldId);
@@ -97,10 +101,15 @@ public class DesignCommandService : IDesignCommandService
         {
             throw new NotFoundEntityIdException(nameof(Design), id);
         }
-        var user = await _userRepository.GetByIdAsync(command.UserId);
+        
+        var user = await _userRepository.GetDetailedUserInformationAsync(command.UserId);
         if (user == null)
         {
             throw new NotFoundEntityIdException(nameof(User), command.UserId);
+        }
+        if (user.Role.Name == UserRoles.SELLER)
+        {
+            throw new ArgumentException("Sellers are not allowed to create designs");
         }
 
         var shield = await _shieldRepository.GetByIdAsync(command.ShieldId);
