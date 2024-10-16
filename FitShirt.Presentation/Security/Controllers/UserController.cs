@@ -109,4 +109,27 @@ public class UserController : ControllerBase
         var result = await _userCommandService.Handle(command);
         return Ok(result);
     }
+    
+    /// GET: /api/v1/users/sellers
+    /// <summary>
+    /// Get a registered sellers list.
+    /// </summary>
+    /// <response code="200">Returns all the sellers</response>
+    /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
+    /// <response code="403">Not authorized</response>
+    /// <response code="404">If there are no users registered</response>
+    /// <response code="500">If there is an internal server error</response>
+    [HttpGet("/api/v1/users/sellers")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.CLIENT)]
+    public async Task<IActionResult> GetSellersAsync()
+    {
+        var query = new GetAllSellersQuery();
+        var result = await _userQueryService.Handle(query);
+        return Ok(result);
+    }
 }

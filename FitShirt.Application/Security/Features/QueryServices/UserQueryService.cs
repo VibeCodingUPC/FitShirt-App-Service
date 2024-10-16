@@ -3,6 +3,7 @@ using FitShirt.Application.Shared.Exceptions;
 using FitShirt.Domain.Security.Models.Aggregates;
 using FitShirt.Domain.Security.Models.Queries;
 using FitShirt.Domain.Security.Models.Responses;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Security.Services;
 
@@ -22,6 +23,18 @@ public class UserQueryService : IUserQueryService
     public async Task<IReadOnlyCollection<UserResponse>> Handle(GetAllUsersQuery query)
     {
         var data = await _userRepository.GetAllDetailedUserInformationAsync();
+        if (data.Count == 0)
+        {
+            throw new NoEntitiesFoundException(nameof(User));
+        }
+
+        var result = _mapper.Map<List<UserResponse>>(data);
+        return result;
+    }
+
+    public async Task<IReadOnlyCollection<UserResponse>> Handle(GetAllSellersQuery query)
+    {
+        var data = await _userRepository.GetUsersByRoleAsync(UserRoles.SELLER);
         if (data.Count == 0)
         {
             throw new NoEntitiesFoundException(nameof(User));
