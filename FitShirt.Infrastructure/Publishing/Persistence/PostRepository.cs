@@ -19,6 +19,7 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
             .Include(post => post.Category)
             .Include(post => post.Color)
             .Include(post => post.User)
+                .ThenInclude(user => user.Role)
             .Include(post => post.PostSizes)
                 .ThenInclude(postSize => postSize.Size)
             .FirstOrDefaultAsync();

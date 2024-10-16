@@ -7,6 +7,9 @@ using FitShirt.Domain.Publishing.Models.Responses;
 using FitShirt.Domain.Publishing.Repositories;
 using FitShirt.Domain.Publishing.Services;
 using FitShirt.Domain.Security.Models.Aggregates;
+using FitShirt.Domain.Security.Models.Entities;
+using FitShirt.Domain.Security.Models.Responses;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Shared.Models.Entities;
 using FitShirt.Domain.Shared.Repositories;
@@ -38,10 +41,14 @@ public class PostCommandService : IPostCommandService
     {
         var postEntity = _mapper.Map<CreatePostCommand, Post>(command);
         
-        var user = await _userRepository.GetByIdAsync(command.UserId);
+        var user = await _userRepository.GetDetailedUserInformationAsync(command.UserId);
         if (user == null)
         {
             throw new NotFoundEntityIdException(nameof(User), command.UserId);
+        }
+        if (user.Role.Name == UserRoles.CLIENT)
+        {
+            throw new ArgumentException("Clients are not allowed to post products.");
         }
         postEntity.User = user;
         
@@ -105,10 +112,14 @@ public class PostCommandService : IPostCommandService
             throw new NotFoundEntityIdException(nameof(Post), id);
         }
         
-        var user = await _userRepository.GetByIdAsync(command.UserId);
+        var user = await _userRepository.GetDetailedUserInformationAsync(command.UserId);
         if (user == null)
         {
             throw new NotFoundEntityIdException(nameof(User), command.UserId);
+        }
+        if (user.Role.Name == UserRoles.CLIENT)
+        {
+            throw new ArgumentException("Clients are not allowed to post products.");
         }
         
         var category = await _categoryRepository.GetByIdAsync(command.CategoryId);
