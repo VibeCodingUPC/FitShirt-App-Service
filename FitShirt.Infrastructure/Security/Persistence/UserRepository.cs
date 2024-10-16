@@ -40,4 +40,11 @@ public class UserRepository : BaseRepository<User>, IUserRepository
             .Include(user => user.Role)
             .FirstOrDefaultAsync();
     }
+
+    public async Task<IReadOnlyCollection<User?>> GetAllDetailedUserInformationAsync()
+    {
+        return await _context.Users
+            .Include(u => u.Role)
+            .ToListAsync();
+    }
 }

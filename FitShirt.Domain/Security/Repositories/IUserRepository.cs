@@ -9,4 +9,5 @@ public interface IUserRepository : IBaseRepository<User>
     Task<User?> GetUserByPhoneNumberAsync(string phoneNumber);
     Task<User?> GetUserByUsernameAsync(string username);
     Task<User?> GetDetailedUserInformationAsync(int id);
+    Task<IReadOnlyCollection<User?>> GetAllDetailedUserInformationAsync();
 }

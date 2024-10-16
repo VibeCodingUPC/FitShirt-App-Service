@@ -21,7 +21,7 @@ public class UserQueryService : IUserQueryService
 
     public async Task<IReadOnlyCollection<UserResponse>> Handle(GetAllUsersQuery query)
     {
-        var data = await _userRepository.GetAllAsync();
+        var data = await _userRepository.GetAllDetailedUserInformationAsync();
         if (data.Count == 0)
         {
             throw new NoEntitiesFoundException(nameof(User));
