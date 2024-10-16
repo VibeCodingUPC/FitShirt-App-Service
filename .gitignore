@@ -36,10 +36,3 @@ _ReSharper*/
 *.nupkg
 *.snupkg
 *.nuget/
-
-# Uncomment if you have Node.js dependencies
-# node_modules/
-<<<<<<< HEAD
-
-=======
->>>>>>> feature/backend-conf-and-architecture
