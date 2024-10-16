@@ -107,7 +107,7 @@ public class UserCommandService : IUserCommandService
 
     public async Task<UserResponse> Handle(int id, UpdateUserCommand command)
     {
-        var userToUpdate = await _userRepository.GetByIdAsync(id);
+        var userToUpdate = await _userRepository.GetDetailedUserInformationAsync(id);
         if (userToUpdate == null)
         {
             throw new NotFoundEntityIdException(nameof(User), id);

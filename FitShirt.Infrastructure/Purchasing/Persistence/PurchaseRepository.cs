@@ -30,6 +30,7 @@ public class PurchaseRepository : BaseRepository<Purchase>, IPurchaseRepository
         return await _context.Purchases
             .Where(purchase => purchase.IsEnable)
             .Include(purchase => purchase.User)
+                .ThenInclude(user => user.Role)
             .Include(purchase => purchase.Items)
             .ThenInclude(item => item.Size)
             .Include(purchase => purchase.Items)
