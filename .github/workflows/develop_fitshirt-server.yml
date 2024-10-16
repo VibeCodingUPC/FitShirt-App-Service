@@ -48,21 +48,21 @@ jobs:
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: .net-app
       
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E32604168BEB4BC88C3DE9673F65D01C }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F09A2A81517744F19DC46301370457BD }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_32079BB9ACC54B63940A466282C5500C }}
-
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5B5BC8E791A647D19A6CAB6E3B6DF089 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D22ED4C48A5240E8883BB5C5EE8E8EE8 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_686E6ECE14524C86B0377A41BFBA0E93 }}
+          
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'fitshirt'
+          app-name: 'fitshirt-server'
           slot-name: 'Production'
           package: .
