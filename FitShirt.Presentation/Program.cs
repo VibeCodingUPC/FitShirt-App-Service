@@ -78,7 +78,7 @@ app.UseHttpsRedirection();
 app.UseCors(builder =>
 {
     builder
-        .WithOrigins("http://localhost:5173", "https://fitshirtupc.web.app/")
+        .WithOrigins("http://localhost:5173", "https://fitshirtupc.web.app")
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials();
