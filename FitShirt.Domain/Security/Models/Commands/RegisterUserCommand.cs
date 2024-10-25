@@ -35,4 +35,5 @@ public class RegisterUserCommand
 
     [Required(ErrorMessage = "User role is required")]
     public string UserRole { get; set; } = null!;
+    
 }

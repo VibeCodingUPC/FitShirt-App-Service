@@ -18,14 +18,16 @@ public class UserCommandService : IUserCommandService
     private readonly IEncryptService _encryptService;
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
+    private readonly IGoogleCaptchaValidator _captchaValidator;
 
-    public UserCommandService(IUserRepository userRepository, IRoleRepository roleRepository, IMapper mapper, IEncryptService encryptService, ITokenService tokenService)
+    public UserCommandService(IUserRepository userRepository, IRoleRepository roleRepository, IMapper mapper, IEncryptService encryptService, ITokenService tokenService, IGoogleCaptchaValidator captchaValidator)
     {
         _userRepository = userRepository;
         _roleRepository = roleRepository;
         _encryptService = encryptService;
         _tokenService = tokenService;
         _mapper = mapper;
+        _captchaValidator = captchaValidator;
     }
 
     public async Task<string> Handle(LoginUserCommand command)
@@ -48,62 +50,73 @@ public class UserCommandService : IUserCommandService
         return _tokenService.GenerateToken(detailUser!);
     }
 
-    public async Task<UserResponse> Handle(RegisterUserCommand command)
+    public async Task<UserResponse> Handle(RegisterUserCommand command, ValidateCaptchaCommand validateCaptchaCommand)
+{
+    // Verificar el Captcha
+    var captchaIsValid = await _captchaValidator.ValidateAsync(validateCaptchaCommand.CaptchaResponse);
+    if (!captchaIsValid)
     {
-        // Verifications
-        var userWithSameEmail = await _userRepository.GetUserByEmailAsync(command.Email);
-        if (userWithSameEmail != null)
-        {
-            throw new DuplicatedUserEmailException(command.Email);
-        }
-        
-        var userWithSamePhoneNumber = await _userRepository.GetUserByPhoneNumberAsync(command.Cellphone);
-        if (userWithSamePhoneNumber != null)
-        {
-            throw new DuplicatedUserCellphoneException(command.Cellphone);
-        }
-        
-        var userWithSameUsername = await _userRepository.GetUserByUsernameAsync(command.Username);
-        if (userWithSameUsername != null)
-        {
-            throw new DuplicatedUserUsernameException(command.Username);
-        }
-
-        UserRoles userRole;
-        if (!Enum.TryParse<UserRoles>(command.UserRole, out userRole))
-        {
-            throw new ArgumentException("Not valid user role");   
-        }
-
-        if (userRole.Equals(UserRoles.ADMIN))
-        {
-            throw new UnauthorizedAccessException("You cannot register with this role");
-        }
-
-        Role roleEntity = await _roleRepository.GetRoleByNameAsync(userRole);
-        
-        // User creation
-        User userEntity = roleEntity!.Name switch
-        {
-            UserRoles.CLIENT => new Client(),
-            UserRoles.SELLER => new Seller(),
-            _ => throw new ArgumentException("Rol de usuario no válido"),
-        };
-
-        _mapper.Map(command, userEntity, typeof(RegisterUserCommand), typeof(User));
-
-        userEntity.Role = roleEntity!;
-        
-        userEntity.Password = _encryptService.Encrypt(command.Password);
-
-        // Saving in database
-        await _userRepository.SaveAsync(userEntity);
-
-        // Creating response
-        var userResponse = _mapper.Map<UserResponse>(userEntity);
-
-        return userResponse;
+        throw new ArgumentException("Invalid Captcha.");
     }
+
+    // Verificar si el correo ya existe
+    var userWithSameEmail = await _userRepository.GetUserByEmailAsync(command.Email);
+    if (userWithSameEmail != null)
+    {
+        throw new DuplicatedUserEmailException(command.Email);
+    }
+    
+    // Verificar si el teléfono ya existe
+    var userWithSamePhoneNumber = await _userRepository.GetUserByPhoneNumberAsync(command.Cellphone);
+    if (userWithSamePhoneNumber != null)
+    {
+        throw new DuplicatedUserCellphoneException(command.Cellphone);
+    }
+    
+    // Verificar si el nombre de usuario ya existe
+    var userWithSameUsername = await _userRepository.GetUserByUsernameAsync(command.Username);
+    if (userWithSameUsername != null)
+    {
+        throw new DuplicatedUserUsernameException(command.Username);
+    }
+
+    // Validar el rol del usuario
+    UserRoles userRole;
+    if (!Enum.TryParse<UserRoles>(command.UserRole, out userRole))
+    {
+        throw new ArgumentException("Not valid user role");   
+    }
+
+    if (userRole.Equals(UserRoles.ADMIN))
+    {
+        throw new UnauthorizedAccessException("You cannot register with this role");
+    }
+
+    Role roleEntity = await _roleRepository.GetRoleByNameAsync(userRole);
+    
+    // Crear el usuario basado en el rol
+    User userEntity = roleEntity!.Name switch
+    {
+        UserRoles.CLIENT => new Client(),
+        UserRoles.SELLER => new Seller(),
+        _ => throw new ArgumentException("Rol de usuario no válido"),
+    };
+
+    // Mapear los valores del comando a la entidad del usuario
+    _mapper.Map(command, userEntity, typeof(RegisterUserCommand), typeof(User));
+
+    userEntity.Role = roleEntity!;
+    userEntity.Password = _encryptService.Encrypt(command.Password);
+
+    // Guardar en la base de datos
+    await _userRepository.SaveAsync(userEntity);
+
+    // Crear la respuesta
+    var userResponse = _mapper.Map<UserResponse>(userEntity);
+
+    return userResponse;
+}
+
 
     public async Task<UserResponse> Handle(int id, UpdateUserCommand command)
     {

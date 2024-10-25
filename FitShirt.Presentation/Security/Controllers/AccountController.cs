@@ -51,9 +51,9 @@ public class AccountController : ControllerBase
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Register([FromBody] RegisterUserCommand command)
+    public async Task<IActionResult> Register([FromBody] RegisterWithCaptchaCommand command)
     {
-        var result = await _userCommandService.Handle(command);
+        var result = await _userCommandService.Handle(command.RegisterUser, command.ValidateCaptcha);
         return StatusCode(StatusCodes.Status201Created, result);
     }
     
