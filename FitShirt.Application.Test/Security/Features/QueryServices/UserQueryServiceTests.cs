@@ -31,7 +31,7 @@ public class UserQueryServiceTests
     {
         // Arrange
         var query = new GetAllUsersQuery();
-        _userRepositoryMock.Setup(repo => repo.GetAllAsync()).ReturnsAsync(new List<User>());
+        _userRepositoryMock.Setup(repo => repo.GetAllDetailedUserInformationAsync()).ReturnsAsync(new List<User>());
 
         // Act & Assert
         await Assert.ThrowsAsync<NoEntitiesFoundException>(() => _userQueryService.Handle(query));
@@ -52,7 +52,7 @@ public class UserQueryServiceTests
             new UserResponse { Id = 1, Name = "User1", Email = "user1@example.com" },
             new UserResponse { Id = 2, Name = "User2", Email = "user2@example.com" }
         };
-        _userRepositoryMock.Setup(repo => repo.GetAllAsync()).ReturnsAsync(users);
+        _userRepositoryMock.Setup(repo => repo.GetAllDetailedUserInformationAsync()).ReturnsAsync(users);
         _mapperMock.Setup(m => m.Map<List<UserResponse>>(users)).Returns(userResponses);
 
         // Act
