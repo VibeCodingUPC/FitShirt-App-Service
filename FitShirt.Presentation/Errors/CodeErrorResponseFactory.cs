@@ -12,6 +12,7 @@ public static class CodeErrorResponseFactory
             NotFoundException => (int)HttpStatusCode.NotFound,
             ValidationException => (int)HttpStatusCode.BadRequest,
             ConflictException => (int)HttpStatusCode.Conflict,
+            UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized,
             _ => (int)HttpStatusCode.InternalServerError
         };
 
