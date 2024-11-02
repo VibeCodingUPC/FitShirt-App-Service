@@ -33,14 +33,12 @@ public class UserCommandService : IUserCommandService
         var userInDatabase = await _userRepository.GetUserByUsernameAsync(command.Username);
         if (userInDatabase == null)
         {
-            throw new NotFoundEntityAttributeException(
-                nameof(User), nameof(command.Username), command.Username
-            );
+            throw new UnauthorizedAccessException("The username or password provided is incorrect.");
         }
 
         if (!_encryptService.Verify(command.Password, userInDatabase.Password))
         {
-            throw new IncorrectPasswordException();
+            throw new UnauthorizedAccessException("The username or password provided is incorrect.");
         }
 
         var detailUser = await _userRepository.GetDetailedUserInformationAsync(userInDatabase.Id);
