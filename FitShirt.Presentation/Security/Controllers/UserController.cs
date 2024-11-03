@@ -132,4 +132,27 @@ public class UserController : ControllerBase
         var result = await _userQueryService.Handle(query);
         return Ok(result);
     }
+    
+    /// GET: /api/v1/users/sellers/{id}
+    /// <summary>
+    /// Get a registered seller by its id
+    /// </summary>
+    /// <response code="200">Returns the seller</response>
+    /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
+    /// <response code="403">Not authorized</response>
+    /// <response code="404">If the seller was not found</response>
+    /// <response code="500">If there is an internal server error</response>
+    [HttpGet("/api/v1/users/sellers/{sellerId}")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.CLIENT)]
+    public async Task<IActionResult> GetSellerByIdAsync(int sellerId)
+    {
+        var query = new GetSellerByIdQuery(sellerId);
+        var result = await _userQueryService.Handle(query);
+        return Ok(result);
+    }
 }

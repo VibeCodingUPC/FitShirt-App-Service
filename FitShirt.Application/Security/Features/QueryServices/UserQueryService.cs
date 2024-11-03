@@ -91,4 +91,21 @@ public class UserQueryService : IUserQueryService
         var result = _mapper.Map<UserResponse>(user);
         return result;
     }
+
+    public async Task<UserResponse?> Handle(GetSellerByIdQuery query)
+    {
+        var user = await _userRepository.GetDetailedUserInformationAsync(query.Id);
+        if (user == null)
+        {
+            throw new NoEntitiesFoundException(nameof(User));
+        }
+
+        if (user.Role.Name != UserRoles.SELLER)
+        {
+            throw new ConflictException("The required user is not a seller");
+        }
+        
+        var result = _mapper.Map<UserResponse>(user);
+        return result;
+    }
 }
