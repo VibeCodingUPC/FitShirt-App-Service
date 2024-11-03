@@ -12,7 +12,9 @@ using FitShirt.Domain.Security.Models.Responses;
 using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Shared.Models.Entities;
+using FitShirt.Domain.Shared.Models.ImageCloudinary;
 using FitShirt.Domain.Shared.Repositories;
+using FitShirt.Domain.Shared.Services.ImageCloudinary;
 
 namespace FitShirt.Application.Publishing.Features.CommandServices;
 
@@ -24,9 +26,11 @@ public class PostCommandService : IPostCommandService
     private readonly IColorRepository _colorRepository;
     private readonly ISizeRepository _sizeRepository;
     private readonly IPostSizeRepository _postSizeRepository;
+    private readonly IPostPhotoRepository _postPhotoRepository;
+    private readonly IManageImageService _manageImageService;
     private readonly IMapper _mapper;
 
-    public PostCommandService(IPostRepository postRepository, IMapper mapper, IUserRepository userRepository, ICategoryRepository categoryRepository, IColorRepository colorRepository, ISizeRepository sizeRepository, IPostSizeRepository postSizeRepository)
+    public PostCommandService(IPostRepository postRepository, IMapper mapper, IUserRepository userRepository, ICategoryRepository categoryRepository, IColorRepository colorRepository, ISizeRepository sizeRepository, IPostSizeRepository postSizeRepository, IManageImageService manageImageService, IPostPhotoRepository postPhotoRepository)
     {
         _postRepository = postRepository;
         _userRepository = userRepository;
@@ -34,6 +38,8 @@ public class PostCommandService : IPostCommandService
         _colorRepository = colorRepository;
         _sizeRepository = sizeRepository;
         _postSizeRepository = postSizeRepository;
+        _manageImageService = manageImageService;
+        _postPhotoRepository = postPhotoRepository;
         _mapper = mapper;
     }
 
@@ -96,6 +102,16 @@ public class PostCommandService : IPostCommandService
         }
 
         await _postRepository.SaveAsync(postEntity);
+
+        var resultImage = await _manageImageService.UploadImage(new ImageData
+        {
+            ImageStream = command.Image.OpenReadStream(),
+            Name = command.Image.Name
+        });
+        
+        var postPhotoEntity = new PostPhoto(resultImage, postEntity.Id);
+
+        await _postPhotoRepository.SaveAsync(postPhotoEntity);
 
         var sizesResponse = _mapper.Map<List<PostSizeResponse>>(postEntity.PostSizes);
         var postResponse = _mapper.Map<PostResponse>(postEntity);
@@ -168,8 +184,21 @@ public class PostCommandService : IPostCommandService
         postToUpdate.PostSizes = postSizeList;
 
         await _postSizeRepository.DeleteByPostIdAsync(id);
-        await _postRepository.ModifyAsync(postToUpdate);
+        
+        var postPhotoToDelete = await _postPhotoRepository.GetPostPhotoByPostId(id);
+        await _postPhotoRepository.DeleteAsync(postPhotoToDelete!.Id);
+        
+        var resultImage = await _manageImageService.UploadImage(new ImageData
+        {
+            ImageStream = command.Image.OpenReadStream(),
+            Name = command.Image.Name
+        });
+        var postPhotoEntity = new PostPhoto(resultImage, postToUpdate.Id);
 
+        await _postPhotoRepository.SaveAsync(postPhotoEntity);
+
+        await _postRepository.ModifyAsync(postToUpdate);
+        
         var sizesResponse = _mapper.Map<List<PostSizeResponse>>(postToUpdate.PostSizes);
         var postResponse = _mapper.Map<PostResponse>(postToUpdate);
         postResponse.Sizes = sizesResponse;
@@ -184,6 +213,9 @@ public class PostCommandService : IPostCommandService
         {
             throw new NotFoundEntityIdException(nameof(Post), command.Id);
         }
+        
+        var postPhotoToDelete = await _postPhotoRepository.GetPostPhotoByPostId(command.Id);
+        await _postPhotoRepository.DeleteAsync(postPhotoToDelete!.Id);
         
         return await _postRepository.DeleteAsync(command.Id);
     }

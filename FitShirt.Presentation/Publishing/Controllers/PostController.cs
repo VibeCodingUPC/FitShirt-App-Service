@@ -150,7 +150,7 @@ public class PostController : ControllerBase
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
     [CustomAuthorize(UserRoles.ADMIN, UserRoles.SELLER)]
-    public async Task<IActionResult> PostPostAsync([FromBody] CreatePostCommand command)
+    public async Task<IActionResult> PostPostAsync([FromForm] CreatePostCommand command)
     {
         var result = await _postCommandService.Handle(command);
         return StatusCode(StatusCodes.Status201Created, result);
@@ -191,7 +191,7 @@ public class PostController : ControllerBase
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
     [CustomAuthorize(UserRoles.ADMIN, UserRoles.SELLER)]
-    public async Task<IActionResult> PutPostAsync(int id, [FromBody] UpdatePostCommand command)
+    public async Task<IActionResult> PutPostAsync(int id, [FromForm] UpdatePostCommand command)
     {
         var result = await _postCommandService.Handle(id, command);
         return Ok(result);

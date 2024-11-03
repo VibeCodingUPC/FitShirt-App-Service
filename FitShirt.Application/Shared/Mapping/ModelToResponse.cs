@@ -19,8 +19,16 @@ public class ModelToResponse : Profile
 {
     public ModelToResponse()
     {
-        CreateMap<Post, PostResponse>();
-        CreateMap<Post, ShirtResponse>();
+        CreateMap<Post, PostResponse>()
+            .AfterMap((p, pr) =>
+            {
+                pr.Image = p.PostPhoto.Url;
+            });
+        CreateMap<Post, ShirtResponse>()
+            .AfterMap((p, sr) =>
+            {
+                sr.Image = p.PostPhoto.Url;
+            });
         CreateMap<Category, CategoryResponse>();
         CreateMap<Color, ColorResponse>();
         CreateMap<Category, CategoryResponse>();

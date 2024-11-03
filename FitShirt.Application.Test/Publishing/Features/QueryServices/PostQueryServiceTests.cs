@@ -45,7 +45,7 @@ public class PostQueryServiceTests
             new Post { Id = 2, Name = "Post 2" }
         };
 
-        _postRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(postList);
+        _postRepositoryMock.Setup(r => r.GetShirtsAsync()).ReturnsAsync(postList);
 
         var shirtResponseList = new List<ShirtResponse>
         {
@@ -71,7 +71,7 @@ public class PostQueryServiceTests
         var query = new GetAllPostsQuery();
         var emptyPostList = new List<Post>();
 
-        _postRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(emptyPostList);
+        _postRepositoryMock.Setup(r => r.GetShirtsAsync()).ReturnsAsync(emptyPostList);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<NoEntitiesFoundException>(() => _postQueryService.Handle(query));

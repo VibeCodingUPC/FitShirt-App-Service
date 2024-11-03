@@ -1,7 +1,10 @@
 using System.Reflection;
 using FitShirt.Application;
+using FitShirt.Domain.Shared.Models.ImageCloudinary;
+using FitShirt.Domain.Shared.Services.ImageCloudinary;
 using FitShirt.Infrastructure;
 using FitShirt.Infrastructure.Shared.Contexts;
+using FitShirt.Infrastructure.Shared.ImageCloudinary.Services;
 using FitShirt.Presentation.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
@@ -57,6 +60,9 @@ builder.Services.AddApplicationServices();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
 
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+builder.Services.AddScoped<IManageImageService, ManageImageService>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -84,7 +90,7 @@ app.UseCors(builder =>
         .AllowCredentials();
 });
 
-app.UseAuthentication();
+//app.UseAuthentication();
 
 //app.UseAuthorization();
 

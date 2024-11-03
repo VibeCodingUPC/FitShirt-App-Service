@@ -12,12 +12,21 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
     {
     }
 
+    public async Task<IReadOnlyCollection<Post>> GetShirtsAsync()
+    {
+        return await _context.Posts
+            .Where(p => p.IsEnable)
+            .Include(p => p.PostPhoto)
+            .ToListAsync();
+    }
+
     public async Task<Post?> GetPostByIdAsync(int id)
     {
         return await _context.Posts
             .Where(post => post.IsEnable && post.Id == id)
             .Include(post => post.Category)
             .Include(post => post.Color)
+            .Include(p => p.PostPhoto)
             .Include(post => post.User)
                 .ThenInclude(user => user.Role)
             .Include(post => post.PostSizes)
@@ -29,6 +38,7 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
     {
         return await _context.Posts
             .Where(post => post.UserId == userId && post.IsEnable == true)
+            .Include(p => p.PostPhoto)
             .ToListAsync();
     }
 
@@ -40,6 +50,7 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
                 (colorId==null || post.ColorId == colorId) &&
                 post.IsEnable
             )
+            .Include(p => p.PostPhoto)
             .ToListAsync();
     }
 
@@ -47,6 +58,7 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
     {
         return await _context.Posts
             .Where(post => post.Name == name)
+            .Include(p => p.PostPhoto)
             .FirstOrDefaultAsync();
     }
 }

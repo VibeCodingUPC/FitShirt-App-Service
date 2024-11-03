@@ -50,7 +50,7 @@ public class FitShirtDbContext : DbContext
         builder.Entity<User>()
             .HasOne(u => u.Role) // Un usuario tiene un rol
             .WithMany(r => r.Users) // Un rol puede tener muchos usuarios
-            .HasForeignKey(u => u.RoleId) // La clave foránea en User
+            .HasForeignKey(u => u.RoleId) // La clave forï¿½nea en User
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<Role>()
@@ -80,6 +80,12 @@ public class FitShirtDbContext : DbContext
             .HasForeignKey(ps => ps.PostId)
             .IsRequired(true)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Post>()
+            .HasOne(p => p.PostPhoto)
+            .WithOne(p => p.Post)
+            .HasForeignKey<PostPhoto>(p => p.PostId)
+            .IsRequired();
 
         // ------
 
@@ -136,6 +142,7 @@ public class FitShirtDbContext : DbContext
     public DbSet<Item> Items { get; set; }
     
     public DbSet<Post> Posts { get; set; }
+    public DbSet<PostPhoto> PostPhotos { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<PostSize> PostSizes { get; set; }
     
