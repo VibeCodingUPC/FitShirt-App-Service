@@ -57,7 +57,7 @@ public class PurchaseCommandService:IPurchaseCommandService
         List<Item> items = new List<Item>();
         foreach (var itemRequest in command.Items)
         {
-            var post = await _postRepository.GetByIdAsync(itemRequest.PostId);
+            var post = await _postRepository.GetPostByIdAsync(itemRequest.PostId);
             var size = await _sizeRepository.GetByIdAsync(itemRequest.SizeId);
 
             if (post == null)

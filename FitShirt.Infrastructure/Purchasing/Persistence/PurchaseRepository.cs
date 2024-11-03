@@ -22,6 +22,7 @@ public class PurchaseRepository : BaseRepository<Purchase>, IPurchaseRepository
             .ThenInclude(item => item.Size)
             .Include(purchase => purchase.Items)
             .ThenInclude(item => item.Post)
+            .ThenInclude(post => post.PostPhoto)
             .ToListAsync();
     }
 
@@ -34,7 +35,8 @@ public class PurchaseRepository : BaseRepository<Purchase>, IPurchaseRepository
             .Include(purchase => purchase.Items)
             .ThenInclude(item => item.Size)
             .Include(purchase => purchase.Items)
-            .ThenInclude(item => item.Post)
+                .ThenInclude(item => item.Post)
+                .ThenInclude(post => post.PostPhoto)
             .ToListAsync();
     }
 
@@ -48,6 +50,7 @@ public class PurchaseRepository : BaseRepository<Purchase>, IPurchaseRepository
             .ThenInclude(item => item.Size)
             .Include(purchase => purchase.Items)
             .ThenInclude(item => item.Post)
+            .ThenInclude(post => post.PostPhoto)
             .FirstOrDefaultAsync();
     }
 
