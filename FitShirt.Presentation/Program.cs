@@ -90,7 +90,7 @@ app.UseCors(builder =>
         .AllowCredentials();
 });
 
-app.UseAuthentication();
+//app.UseAuthentication();
 
 //app.UseAuthorization();
 
