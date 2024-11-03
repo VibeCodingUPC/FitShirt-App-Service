@@ -8,7 +8,6 @@ namespace FitShirt.Domain.Publishing.Models.Aggregates;
 public class Post : BaseModel
 {
     public string Name { get; set; }
-    public string Image { get; set; }
     public int Stock { get; set; }
     public double Price { get; set; }
     
@@ -24,4 +23,5 @@ public class Post : BaseModel
     public int UserId { get; set; }
     public User User { get; set; }
     
+    public PostPhoto? PostPhoto { get; set; }
 }
