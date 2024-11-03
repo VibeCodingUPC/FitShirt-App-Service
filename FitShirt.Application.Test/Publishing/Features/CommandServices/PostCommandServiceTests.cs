@@ -10,6 +10,7 @@ using FitShirt.Domain.Security.Models.Aggregates;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Shared.Models.Entities;
 using FitShirt.Domain.Shared.Repositories;
+using FitShirt.Domain.Shared.Services.ImageCloudinary;
 using Moq;
 
 namespace FitShirt.Application.Test.Publishing.Features.CommandServices;
@@ -22,6 +23,8 @@ public class PostCommandServiceTests
     private readonly Mock<IColorRepository> _colorRepositoryMock;
     private readonly Mock<ISizeRepository> _sizeRepositoryMock;
     private readonly Mock<IPostSizeRepository> _postSizeRepositoryMock;
+    private readonly Mock<IPostPhotoRepository> _postPhotoRepository;
+    private readonly Mock<IManageImageService> _manageImageService;
     private readonly Mock<IMapper> _mapperMock;
     private readonly PostCommandService _postCommandService;
 
@@ -33,6 +36,8 @@ public class PostCommandServiceTests
         _sizeRepositoryMock = new Mock<ISizeRepository>();
         _postRepositoryMock = new Mock<IPostRepository>();
         _postSizeRepositoryMock = new Mock<IPostSizeRepository>();
+        _postPhotoRepository = new Mock<IPostPhotoRepository>();
+        _manageImageService = new Mock<IManageImageService>();
         _mapperMock = new Mock<IMapper>();
 
         _postCommandService = new PostCommandService(
@@ -42,7 +47,9 @@ public class PostCommandServiceTests
             _categoryRepositoryMock.Object,
             _colorRepositoryMock.Object,
             _sizeRepositoryMock.Object,
-            _postSizeRepositoryMock.Object
+            _postSizeRepositoryMock.Object,
+            _manageImageService.Object,
+            _postPhotoRepository.Object
         );
     }
 
