@@ -1,4 +1,3 @@
-using FitShirt.Domain.Security.Models.Aggregates;
 using FitShirt.Domain.Security.Models.Queries;
 using FitShirt.Domain.Security.Models.Responses;
 
@@ -12,4 +11,5 @@ public interface IUserQueryService
     Task<UserResponse?> Handle(GetUserByPhoneNumberQuery query);
     Task<UserResponse?> Handle(GetUserByUsernameQuery query);
     Task<UserResponse?> Handle(GetUserByIdQuery query);
+    Task<UserResponse?> Handle(GetSellerByIdQuery query);
 }
