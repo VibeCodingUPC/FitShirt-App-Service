@@ -1,8 +1,8 @@
 namespace FitShirt.Application.Shared.Exceptions;
 
-public abstract class ConflictException : Exception
+public class ConflictException : Exception
 {
-    protected ConflictException(string message) : base(message)
+    public ConflictException(string message) : base(message)
     {
         
     }
