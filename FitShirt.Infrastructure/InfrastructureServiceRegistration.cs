@@ -2,6 +2,7 @@ using FitShirt.Domain.Designing.Repositories;
 using FitShirt.Domain.Publishing.Repositories;
 using FitShirt.Domain.Purchasing.Repositories;
 using FitShirt.Domain.Security.Repositories;
+using FitShirt.Domain.Shared.Models.ImageCloudinary;
 using FitShirt.Domain.Shared.Repositories;
 using FitShirt.Infrastructure.Designing.Persistence;
 using FitShirt.Infrastructure.Publishing.Persistence;
@@ -35,6 +36,7 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IPostRepository, PostRepository>();
         services.AddScoped<IPostSizeRepository, PostSizeRepository>();
+        services.AddScoped<IPostPhotoRepository, PostPhotoRepository>();
         services.AddScoped<IItemRepository, ItemRepository>();
         services.AddScoped<IPurchaseRepository, PurchaseRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
