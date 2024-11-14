@@ -2,6 +2,8 @@ using AutoMapper;
 using FitShirt.Domain.Designing.Models.Aggregates;
 using FitShirt.Domain.Designing.Models.Entities;
 using FitShirt.Domain.Designing.Models.Responses;
+using FitShirt.Domain.OrderManagement.Models.Aggregates;
+using FitShirt.Domain.OrderManagement.Models.Responses;
 using FitShirt.Domain.Publishing.Models.Aggregates;
 using FitShirt.Domain.Publishing.Models.Entities;
 using FitShirt.Domain.Publishing.Models.Responses;
@@ -44,5 +46,10 @@ public class ModelToResponse : Profile
         CreateMap<Shield, ShieldResponse>();
         CreateMap<Purchase, PurchaseResponse>();
         CreateMap<Item, ItemResponse>();
+        CreateMap<DesignOrder, DesignOrderResponse>()
+            .AfterMap((d, dr) =>
+            {
+                dr.Status = d.Status.ToString();
+            });
     }
 }

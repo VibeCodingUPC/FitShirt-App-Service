@@ -1,5 +1,7 @@
 using FitShirt.Application.Designing.Features.CommandServices;
 using FitShirt.Application.Designing.Features.QueryServices;
+using FitShirt.Application.OrderManagement.Features.CommandServices;
+using FitShirt.Application.OrderManagement.Features.QueryServices;
 using FitShirt.Application.Publishing.Features.CommandServices;
 using FitShirt.Application.Publishing.Features.QueryServices;
 using FitShirt.Application.Purchasing.Features.CommandServices;
@@ -10,6 +12,7 @@ using FitShirt.Application.Security.Features.QueryServices;
 using FitShirt.Application.Shared.Features.QueryServices;
 using FitShirt.Application.Shared.Mapping;
 using FitShirt.Domain.Designing.Services;
+using FitShirt.Domain.OrderManagement.Services;
 using FitShirt.Domain.Publishing.Services;
 using FitShirt.Domain.Purchasing.Services;
 using FitShirt.Domain.Security.Services;
@@ -44,6 +47,8 @@ public static class ApplicationServiceRegistration
         services.AddScoped<ISizeQueryService, SizeQueryService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IEncryptService, EncryptService>();
+        services.AddScoped<IDesignOrderCommandService, DesignOrderCommandService>();
+        services.AddScoped<IDesignOrderQueryService, DesignOrderQueryService>();
         
         return services;
     }
