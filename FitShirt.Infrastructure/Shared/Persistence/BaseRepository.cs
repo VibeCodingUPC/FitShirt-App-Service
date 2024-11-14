@@ -9,22 +9,22 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 {
     protected readonly FitShirtDbContext _context;
 
-    public BaseRepository(FitShirtDbContext context)
+    protected BaseRepository(FitShirtDbContext context)
     {
         _context = context;
     }
 
-    public async Task<IReadOnlyCollection<TEntity>> GetAllAsync()
+    public virtual async Task<IReadOnlyCollection<TEntity>> GetAllAsync()
     {
         return await _context.Set<TEntity>().Where(t => t.IsEnable).ToListAsync();
     }
 
-    public async Task<TEntity?> GetByIdAsync(int id)
+    public virtual async Task<TEntity?> GetByIdAsync(int id)
     {
         return await _context.Set<TEntity>().Where(t => t.IsEnable && t.Id == id).FirstOrDefaultAsync();
     }
 
-    public async Task<TEntity> SaveAsync(TEntity entity)
+    public virtual async Task<TEntity> SaveAsync(TEntity entity)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
         try
@@ -42,7 +42,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         }
     }
 
-    public async Task<TEntity> ModifyAsync(TEntity entity)
+    public virtual async Task<TEntity> ModifyAsync(TEntity entity)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
         try
@@ -60,7 +60,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         }
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public virtual async Task<bool> DeleteAsync(int id)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
         try
