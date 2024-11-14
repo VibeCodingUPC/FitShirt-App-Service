@@ -44,7 +44,8 @@ public static class ApplicationServiceRegistration
         services.AddScoped<ISizeQueryService, SizeQueryService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IEncryptService, EncryptService>();
-        
+        services.AddScoped<IGoogleCaptchaValidator, GoogleCaptchaValidator>();
+        services.AddHttpClient(); 
         return services;
     }
 }

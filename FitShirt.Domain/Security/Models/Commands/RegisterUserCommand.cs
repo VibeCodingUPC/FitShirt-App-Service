@@ -35,4 +35,8 @@ public class RegisterUserCommand
 
     [Required(ErrorMessage = "User role is required")]
     public string UserRole { get; set; } = null!;
+    
+    [Required(ErrorMessage = "Captcha response is required")]
+    public string CaptchaResponse { get; set; } = null!;
+    
 }
