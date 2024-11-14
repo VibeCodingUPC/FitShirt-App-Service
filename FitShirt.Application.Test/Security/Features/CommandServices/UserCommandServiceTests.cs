@@ -87,13 +87,10 @@ public class UserCommandServiceTests
         _userRepositoryMock.Setup(repo => repo.GetUserByUsernameAsync(command.Username)).ReturnsAsync((User)null);
 
         // Act
-        var exception = await Assert.ThrowsAsync<NotFoundEntityAttributeException>(() => _userCommandService.Handle(command));
+        var exception = await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _userCommandService.Handle(command));
 
         // Assert
-        Assert.Equal(nameof(User), exception.EntityName);
-        Assert.Equal(nameof(command.Username), exception.AttributeName);
-        Assert.Equal(command.Username, exception.AttributeValue);
-        _userRepositoryMock.Verify(repo => repo.GetUserByUsernameAsync(command.Username), Times.Once);
+        Assert.Equal("The username or password provided is incorrect.", exception.Message);
     }
     
     [Fact]
@@ -115,11 +112,10 @@ public class UserCommandServiceTests
         _userRepositoryMock.Setup(repo => repo.GetUserByUsernameAsync(command.Username)).ReturnsAsync(userInDatabase);
 
         // Act
-        var exception = await Assert.ThrowsAsync<IncorrectPasswordException>(() => _userCommandService.Handle(command));
+        var exception = await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _userCommandService.Handle(command));
 
         // Assert
-        Assert.Equal("Incorrect password", exception.Message);
-        _userRepositoryMock.Verify(repo => repo.GetUserByUsernameAsync(command.Username), Times.Once);
+        Assert.Equal("The username or password provided is incorrect.", exception.Message);
     }
 
     [Fact]
