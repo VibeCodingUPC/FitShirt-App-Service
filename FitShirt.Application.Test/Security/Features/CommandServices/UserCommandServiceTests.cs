@@ -7,14 +7,13 @@ using FitShirt.Domain.Security.Models.Commands;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Security.Services;
 using Moq;
-using NSubstitute;
 
 namespace FitShirt.Application.Test.Security.Features.CommandServices;
 
 public class UserCommandServiceTests
 {
     private readonly Mock<IUserRepository> _userRepositoryMock;
-    private readonly Mock<IServiceRepository> _serviceRepositoryMock;
+    private readonly Mock<IGoogleCaptchaValidator> _googleCaptchaValidator;
     private readonly Mock<IRoleRepository> _roleRepositoryMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly UserCommandService _userCommandService;
@@ -24,18 +23,19 @@ public class UserCommandServiceTests
     public UserCommandServiceTests()
     {
         _userRepositoryMock = new Mock<IUserRepository>();
-        _serviceRepositoryMock = new Mock<IServiceRepository>();
         _roleRepositoryMock = new Mock<IRoleRepository>();
         _mapperMock = new Mock<IMapper>();
         _encryptServiceMock = new Mock<IEncryptService>();
         _tokenServiceMock = new Mock<ITokenService>();
+        _googleCaptchaValidator = new Mock<IGoogleCaptchaValidator>();
 
         _userCommandService = new UserCommandService(
             _userRepositoryMock.Object,
             _roleRepositoryMock.Object,
             _mapperMock.Object,
             _encryptServiceMock.Object,
-            _tokenServiceMock.Object
+            _tokenServiceMock.Object,
+            _googleCaptchaValidator.Object
         );
     }
     
@@ -126,15 +126,11 @@ public class UserCommandServiceTests
     public async Task HandleRegisterUser_DuplicatedEmail_ThrowsDuplicatedUserEmailException()
     {
         // Arrange
-        var command = new RegisterUserCommand
-        {
-            Email = "duplicate@example.com",
-            Cellphone = "1234567890",
-            Username = "testuser",
-        };
+        var command = ConstructCorrectRegisterUserCommand();
 
         var existingUser = new Client { Email = command.Email };
     
+        _googleCaptchaValidator.Setup(r => r.ValidateAsync(command.CaptchaResponse)).ReturnsAsync(true);
         _userRepositoryMock.Setup(r => r.GetUserByEmailAsync(command.Email)).ReturnsAsync(existingUser);
 
         // Act & Assert
@@ -146,15 +142,11 @@ public class UserCommandServiceTests
     public async Task HandleRegisterUser_DuplicatedPhoneNumber_ThrowsDuplicatedUserCellphoneException()
     {
         // Arrange
-        var command = new RegisterUserCommand
-        {
-            Email = "test@example.com",
-            Cellphone = "duplicatePhone",
-            Username = "testuser",
-        };
+        var command = ConstructCorrectRegisterUserCommand();
 
         var existingUser = new Client { Cellphone = command.Cellphone };
-    
+
+        _googleCaptchaValidator.Setup(r => r.ValidateAsync(command.CaptchaResponse)).ReturnsAsync(true);
         _userRepositoryMock.Setup(r => r.GetUserByPhoneNumberAsync(command.Cellphone)).ReturnsAsync(existingUser);
 
         // Act & Assert
@@ -166,19 +158,48 @@ public class UserCommandServiceTests
     public async Task HandleRegisterUser_DuplicatedUsername_ThrowsDuplicatedUserUsernameException()
     {
         // Arrange
-        var command = new RegisterUserCommand
-        {
-            Email = "test@example.com",
-            Cellphone = "1234567890",
-            Username = "duplicateUsername",
-        };
+        var command = ConstructCorrectRegisterUserCommand();
 
         var existingUser = new Client { Username = command.Username };
     
+        _googleCaptchaValidator.Setup(r => r.ValidateAsync(command.CaptchaResponse)).ReturnsAsync(true);
         _userRepositoryMock.Setup(r => r.GetUserByUsernameAsync(command.Username)).ReturnsAsync(existingUser);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<DuplicatedUserUsernameException>(() => _userCommandService.Handle(command));
         Assert.Equal(command.Username, exception.AttributeValue);
+    }
+
+    [Fact]
+    public async Task Handle_InvalidCaptcha_ThrowsArgumentException()
+    {
+        // Arrange
+        var command = ConstructCorrectRegisterUserCommand();
+
+        command.CaptchaResponse = "Invalid_captcha";
+
+        _googleCaptchaValidator.Setup(r => r.ValidateAsync(command.CaptchaResponse)).ReturnsAsync(false);
+        
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<ArgumentException>(() => _userCommandService.Handle(command));
+        Assert.Equal("Invalid Captcha.", exception.Message);
+    }
+
+    private RegisterUserCommand ConstructCorrectRegisterUserCommand()
+    {
+        var command = new RegisterUserCommand
+        {
+            Name = "AnyName",
+            Lastname = "AnyLastname",
+            Username = "UserTest",
+            Password = "password",
+            ConfirmPassword = "password",
+            Email = "usertest@example.com",
+            Cellphone = "999999999",
+            CaptchaResponse = "captcha_response",
+            UserRole = "SELLER"
+        };
+
+        return command;
     }
 }
