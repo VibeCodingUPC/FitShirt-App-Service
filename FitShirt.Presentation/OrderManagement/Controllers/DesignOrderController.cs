@@ -1,6 +1,8 @@
 using FitShirt.Domain.OrderManagement.Models.Commands;
 using FitShirt.Domain.OrderManagement.Models.Queries;
 using FitShirt.Domain.OrderManagement.Services;
+using FitShirt.Domain.Security.Models.ValueObjects;
+using FitShirt.Presentation.Filter;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +23,7 @@ public class DesignOrderController : ControllerBase
     }
     
     [HttpGet("/design_orders")]
-    [AllowAnonymous]
+    [CustomAuthorize(UserRoles.ADMIN)]
     public async Task<IActionResult> GetDesignOrdersAsync()
     {
         var query = new GetAllDesignOrdersQuery();
@@ -30,7 +32,7 @@ public class DesignOrderController : ControllerBase
     }
     
     [HttpGet("/sellers/{sellerId}/design_orders")]
-    [AllowAnonymous]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.SELLER)]
     public async Task<IActionResult> GetDesignOrdersBySellerIdAsync(int sellerId)
     {
         var query = new GetDesignOrdersBySellerId(sellerId);
@@ -39,7 +41,7 @@ public class DesignOrderController : ControllerBase
     }
     
     [HttpGet("/sellers/{sellerId}/design_orders/{designOrderId}")]
-    [AllowAnonymous]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.SELLER)]
     public async Task<IActionResult> GetDesignOrderByIdAsync(int sellerId, int designOrderId)
     {
         var query = new GetDesignOrderById(sellerId, designOrderId);
@@ -48,7 +50,7 @@ public class DesignOrderController : ControllerBase
     }
 
     [HttpPost("/sellers/{sellerId}/designs/{designId}/design_orders")]
-    [AllowAnonymous]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.CLIENT, UserRoles.SELLER)]
     public async Task<IActionResult> PostDesignOrderAsync(int sellerId, int designId)
     {
         var command = new CreateDesignOrderCommand(sellerId, designId);
