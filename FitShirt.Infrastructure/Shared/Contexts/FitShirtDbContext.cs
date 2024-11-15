@@ -1,5 +1,7 @@
 using FitShirt.Domain.Designing.Models.Aggregates;
 using FitShirt.Domain.Designing.Models.Entities;
+using FitShirt.Domain.OrderManagement.Models.Aggregates;
+using FitShirt.Domain.OrderManagement.Models.ValueObjects;
 using FitShirt.Domain.Publishing.Models.Aggregates;
 using FitShirt.Domain.Publishing.Models.Entities;
 using FitShirt.Domain.Purchasing.Models.Aggregates;
@@ -133,6 +135,21 @@ public class FitShirtDbContext : DbContext
             .IsRequired(true)
             .OnDelete(DeleteBehavior.Restrict);
         
+        //----
+        builder.Entity<DesignOrder>()
+            .Property(d => d.Status)
+            .HasConversion(x => x.ToString(), 
+                x => (OrderStatus) Enum.Parse(typeof(OrderStatus), x));
+
+        builder.Entity<DesignOrder>()
+            .HasOne(d => d.Design)
+            .WithMany()
+            .IsRequired();
+
+        builder.Entity<DesignOrder>()
+            .HasOne(d => d.User)
+            .WithMany()
+            .IsRequired();
     }
     
     public DbSet<User> Users { get; set; }
@@ -151,4 +168,5 @@ public class FitShirtDbContext : DbContext
     
     public DbSet<Color> Colors { get; set; }
     public DbSet<Size> Sizes { get; set; }
+    public DbSet<DesignOrder> DesignOrders { get; set; }
 }

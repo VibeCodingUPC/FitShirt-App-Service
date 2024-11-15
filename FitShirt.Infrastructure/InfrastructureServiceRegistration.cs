@@ -1,10 +1,12 @@
 using FitShirt.Domain.Designing.Repositories;
+using FitShirt.Domain.OrderManagement.Repositories;
 using FitShirt.Domain.Publishing.Repositories;
 using FitShirt.Domain.Purchasing.Repositories;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Shared.Models.ImageCloudinary;
 using FitShirt.Domain.Shared.Repositories;
 using FitShirt.Infrastructure.Designing.Persistence;
+using FitShirt.Infrastructure.OrderManagement.Persistence;
 using FitShirt.Infrastructure.Publishing.Persistence;
 using FitShirt.Infrastructure.Purchasing.Persistence;
 using FitShirt.Infrastructure.Security.Persistence;
@@ -44,6 +46,7 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IColorRepository, ColorRepository>();
         services.AddScoped<ISizeRepository, SizeRepository>();
+        services.AddScoped<IDesignOrderRepository, DesignOrderRepository>();
         
         return services;
     }
