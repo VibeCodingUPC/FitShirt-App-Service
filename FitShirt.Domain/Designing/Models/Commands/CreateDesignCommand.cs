@@ -19,7 +19,9 @@ public class CreateDesignCommand
     [Required(ErrorMessage = "This field is required")]
     [Range(1, int.MaxValue, ErrorMessage = "The number field must be a positive integer")]
     public int TertiaryColorId { get; set; }
-    
+ 
+    public String? imageUrl { get; set; }
+
     [Required(ErrorMessage = "This field is required")]
     [Range(1, int.MaxValue, ErrorMessage = "The number field must be a positive integer")]
     public int UserId { get; set; }

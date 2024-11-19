@@ -83,8 +83,16 @@ public class DesignCommandService : IDesignCommandService
         {
             throw new DuplicatedEntityAttributeException(nameof(Design), nameof(Design.Name),command.Name);
         }
-        designEntity.Image =
-            "https://media.discordapp.net/attachments/998840308617990165/1255599183390572728/camiseta-personalizada.png?ex=667db75d&is=667c65dd&hm=fbb226f0347f808011b1d574ac0715b42995f0b0aeb57b79248c5b6c0d7ad565&=&format=webp&quality=lossless&width=555&height=670";
+
+        if (command.imageUrl == null)
+        {
+            designEntity.Image =
+                "https://static.vecteezy.com/system/resources/previews/021/095/974/non_2x/white-t-shirt-free-png.png";
+        }
+        else
+        {
+            designEntity.Image = command.imageUrl;
+        }
 
         await _designRepository.SaveAsync(designEntity);
 
