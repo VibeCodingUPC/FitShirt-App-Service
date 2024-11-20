@@ -6,6 +6,8 @@ using FitShirt.Domain.Purchasing.Models.Queries;
 using FitShirt.Domain.Purchasing.Models.Responses;
 using FitShirt.Domain.Purchasing.Repositories;
 using FitShirt.Domain.Security.Models.Aggregates;
+using FitShirt.Domain.Security.Models.Entities;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Security.Repositories;
 using Moq;
 
@@ -107,11 +109,11 @@ public class PurchaseQueryServiceTests
     {
         // Arrange
         var query = new GetPurchaseByUserIdQuery(1);
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Client { Id = 1, Name = "Test User", Role = new Role(UserRoles.CLIENT)};
         var purchases = new List<Purchase> { new Purchase { Id = 1 }, new Purchase { Id = 2 } };
         var purchaseResponses = new List<PurchaseResponse> { new PurchaseResponse { Id = 1 }, new PurchaseResponse { Id = 2 } };
 
-        _userRepositoryMock.Setup(repo => repo.GetByIdAsync(query.UserId)).ReturnsAsync(user);
+        _userRepositoryMock.Setup(repo => repo.GetDetailedUserInformationAsync(query.UserId)).ReturnsAsync(user);
         _purchaseRepositoryMock.Setup(repo => repo.GetPurchasesByUserId(query.UserId)).ReturnsAsync(purchases);
         _mapperMock.Setup(m => m.Map<List<PurchaseResponse>>(purchases)).Returns(purchaseResponses);
 

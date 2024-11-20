@@ -1,4 +1,5 @@
 using FitShirt.Domain.Security.Models.Aggregates;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Infrastructure.Shared.Contexts;
 using FitShirt.Infrastructure.Shared.Persistence;
@@ -38,7 +39,21 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         return await _context.Users
             .Where(user => user.Id == id && user.IsEnable)
             .Include(user => user.Role)
-            .Include(user => user.Service)
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<IReadOnlyCollection<User?>> GetUsersByRoleAsync(UserRoles userRoles)
+    {
+        return await _context.Users
+            .Include(user => user.Role)
+            .Where(user => user.Role.Name == userRoles)
+            .ToListAsync();
+    }
+
+    public async Task<IReadOnlyCollection<User?>> GetAllDetailedUserInformationAsync()
+    {
+        return await _context.Users
+            .Include(u => u.Role)
+            .ToListAsync();
     }
 }

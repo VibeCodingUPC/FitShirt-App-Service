@@ -3,6 +3,7 @@ using FitShirt.Application.Shared.Exceptions;
 using FitShirt.Domain.Security.Models.Aggregates;
 using FitShirt.Domain.Security.Models.Queries;
 using FitShirt.Domain.Security.Models.Responses;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Security.Services;
 
@@ -21,7 +22,19 @@ public class UserQueryService : IUserQueryService
 
     public async Task<IReadOnlyCollection<UserResponse>> Handle(GetAllUsersQuery query)
     {
-        var data = await _userRepository.GetAllAsync();
+        var data = await _userRepository.GetAllDetailedUserInformationAsync();
+        if (data.Count == 0)
+        {
+            throw new NoEntitiesFoundException(nameof(User));
+        }
+
+        var result = _mapper.Map<List<UserResponse>>(data);
+        return result;
+    }
+
+    public async Task<IReadOnlyCollection<UserResponse>> Handle(GetAllSellersQuery query)
+    {
+        var data = await _userRepository.GetUsersByRoleAsync(UserRoles.SELLER);
         if (data.Count == 0)
         {
             throw new NoEntitiesFoundException(nameof(User));
@@ -73,6 +86,23 @@ public class UserQueryService : IUserQueryService
         if (user == null)
         {
             throw new NoEntitiesFoundException(nameof(User));
+        }
+        
+        var result = _mapper.Map<UserResponse>(user);
+        return result;
+    }
+
+    public async Task<UserResponse?> Handle(GetSellerByIdQuery query)
+    {
+        var user = await _userRepository.GetDetailedUserInformationAsync(query.Id);
+        if (user == null)
+        {
+            throw new NoEntitiesFoundException(nameof(User));
+        }
+
+        if (user.Role.Name != UserRoles.SELLER)
+        {
+            throw new ConflictException("The required user is not a seller");
         }
         
         var result = _mapper.Map<UserResponse>(user);

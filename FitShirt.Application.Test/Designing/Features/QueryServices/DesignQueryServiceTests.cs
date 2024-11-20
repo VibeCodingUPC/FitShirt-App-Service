@@ -109,7 +109,7 @@ public class DesignQueryServiceTests
     {
         // Arrange
         var query = new GetDesignByUserIdQuery(1);
-        var user = new User { Id = query.UserId };
+        var user = new Client { Id = query.UserId };
         var designs = new List<Design> { new Design { Id = 1 }, new Design { Id = 2 } };
 
         _userRepositoryMock.Setup(repo => repo.GetByIdAsync(query.UserId)).ReturnsAsync(user);

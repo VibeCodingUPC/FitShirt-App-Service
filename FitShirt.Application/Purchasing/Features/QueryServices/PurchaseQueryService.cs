@@ -51,7 +51,7 @@ public class PurchaseQueryService:IPurchaseQueryService
 
     public async Task<IReadOnlyCollection<PurchaseResponse>> Handle(GetPurchaseByUserIdQuery query)
     {
-        var user = await _userRepository.GetByIdAsync(query.UserId);
+        var user = await _userRepository.GetDetailedUserInformationAsync(query.UserId);
         if (user == null)
         {
             throw new NotFoundEntityIdException(nameof(User), query.UserId);

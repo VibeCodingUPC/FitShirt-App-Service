@@ -10,6 +10,8 @@ using FitShirt.Domain.Purchasing.Models.Entities;
 using FitShirt.Domain.Purchasing.Models.Responses;
 using FitShirt.Domain.Purchasing.Repositories;
 using FitShirt.Domain.Security.Models.Aggregates;
+using FitShirt.Domain.Security.Models.Entities;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Shared.Models.Entities;
 using FitShirt.Domain.Shared.Repositories;
@@ -56,14 +58,14 @@ public class PurchaseCommandServiceTests
             }
         };
 
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Client { Id = 1, Name = "Test User", Role = new Role(UserRoles.CLIENT)};
         var post = new Post { Id = 1, Stock = 10 };
         var size = new Size { Id = 1, Value = "L" };
         var purchaseEntity = new Purchase { UserId = 1, Items = new List<Item>(), PurchaseDate = DateTime.Now };
         var purchaseResponse = new PurchaseResponse { Id = 1 };
 
-        _userRepositoryMock.Setup(repo => repo.GetByIdAsync(command.UserId)).ReturnsAsync(user);
-        _postRepositoryMock.Setup(repo => repo.GetByIdAsync(command.Items[0].PostId)).ReturnsAsync(post);
+        _userRepositoryMock.Setup(repo => repo.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync(user);
+        _postRepositoryMock.Setup(repo => repo.GetPostByIdAsync(command.Items[0].PostId)).ReturnsAsync(post);
         _sizeRepositoryMock.Setup(repo => repo.GetByIdAsync(command.Items[0].SizeId)).ReturnsAsync(size);
         
         _mapperMock.Setup(m => m.Map<CreatePurchaseCommand, Purchase>(command)).Returns(purchaseEntity);
@@ -90,7 +92,7 @@ public class PurchaseCommandServiceTests
                 new CreateItemCommand { PostId = 1, SizeId = 1, Quantity = 1 }
             }
         };
-        _userRepositoryMock.Setup(repo => repo.GetByIdAsync(command.UserId)).ReturnsAsync((User)null);
+        _userRepositoryMock.Setup(repo => repo.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync((User)null);
         
         var purchaseEntity = new Purchase { UserId = 1, Items = new List<Item>(), PurchaseDate = DateTime.Now };
         _mapperMock.Setup(m => m.Map<CreatePurchaseCommand, Purchase>(command)).Returns(purchaseEntity);
@@ -116,8 +118,8 @@ public class PurchaseCommandServiceTests
             }
         };
         
-        var user = new User { Id = 1, Name = "Test User" };
-        _userRepositoryMock.Setup(repo => repo.GetByIdAsync(command.UserId)).ReturnsAsync(user);
+        var user = new Client { Id = 1, Name = "Test User", Role = new Role(UserRoles.CLIENT)};
+        _userRepositoryMock.Setup(repo => repo.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync(user);
         _postRepositoryMock.Setup(repo => repo.GetByIdAsync(It.IsAny<int>()));
 
         var purchaseEntity = new Purchase { UserId = 1, Items = new List<Item>(), PurchaseDate = DateTime.Now };
@@ -141,9 +143,9 @@ public class PurchaseCommandServiceTests
             }
         };
 
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Client { Id = 1, Name = "Test User", Role = new Role(UserRoles.CLIENT)};
         var post = new Post { Id = 1, Stock = 10 };
-        _userRepositoryMock.Setup(repo => repo.GetByIdAsync(command.UserId)).ReturnsAsync(user);
+        _userRepositoryMock.Setup(repo => repo.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync(user);
         _postRepositoryMock.Setup(repo => repo.GetByIdAsync(command.Items[0].PostId)).ReturnsAsync(post);
         _sizeRepositoryMock.Setup(repo => repo.GetByIdAsync(It.IsAny<int>()));
 
@@ -167,12 +169,12 @@ public class PurchaseCommandServiceTests
             }
         };
 
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Client { Id = 1, Name = "Test User", Role = new Role(UserRoles.CLIENT)};
         var post = new Post { Id = 1, Stock = 10 };
         var size = new Size { Id = 1, Value = "L" };
 
-        _userRepositoryMock.Setup(repo => repo.GetByIdAsync(command.UserId)).ReturnsAsync(user);
-        _postRepositoryMock.Setup(repo => repo.GetByIdAsync(command.Items[0].PostId)).ReturnsAsync(post);
+        _userRepositoryMock.Setup(repo => repo.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync(user);
+        _postRepositoryMock.Setup(repo => repo.GetPostByIdAsync(command.Items[0].PostId)).ReturnsAsync(post);
         _sizeRepositoryMock.Setup(repo => repo.GetByIdAsync(command.Items[0].SizeId)).ReturnsAsync(size);
 
         var purchaseEntity = new Purchase { UserId = 1, Items = new List<Item>(), PurchaseDate = DateTime.Now };

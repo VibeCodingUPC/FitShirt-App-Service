@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy ASP.Net Core app to Azure Web App - fitshirt
 
 on:
@@ -20,19 +17,23 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '8.x'
-          include-prerelease: true
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o ./myapp
+
+      - name: Verify published files
+        run: |
+          echo "Verifying published files in ./myapp"
+          dir ./myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ./myapp
 
   deploy:
     runs-on: windows-latest
@@ -41,7 +42,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write
 
     steps:
       - name: Download artifact from build job
@@ -50,17 +51,16 @@ jobs:
           name: .net-app
       
       - name: Login to Azure
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C838E7A312A545EE84559028B5B37364 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_2DCAB1AF775D49E99622C07D7ED8221D }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AE6616D59A3340CAA86D53E3D35DD0D2 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E32604168BEB4BC88C3DE9673F65D01C }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F09A2A81517744F19DC46301370457BD }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_32079BB9ACC54B63940A466282C5500C }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: 'fitshirt'
           slot-name: 'Production'
           package: .
-          

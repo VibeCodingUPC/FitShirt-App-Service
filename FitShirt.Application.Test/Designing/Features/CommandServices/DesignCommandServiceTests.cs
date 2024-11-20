@@ -54,7 +54,7 @@ public class DesignCommandServiceTests
             Name = "Test Design"
         };
 
-        var user = new User { Id = 1 };
+        var user = new Client { Id = 1 };
         var shield = new Shield { Id = 1 };
         var primaryColor = new Color { Id = 1 };
         var secondaryColor = new Color { Id = 2 };
@@ -96,7 +96,7 @@ public class DesignCommandServiceTests
         };
 
         _userRepositoryMock.Setup(repo => repo.GetByIdAsync(command.UserId))
-            .ReturnsAsync((User)null);
+            .ReturnsAsync((Client)null);
         
         // Act
         var exception =
@@ -121,7 +121,7 @@ public class DesignCommandServiceTests
             Name = "Test Design"
         };
 
-        var user = new User { Id = 1 };
+        var user = new Client { Id = 1 };
 
         _mapperMock.Setup(m => m.Map<CreateDesignCommand, Design>(command)).Returns(new Design());
         _userRepositoryMock.Setup(repo => repo.GetByIdAsync(command.UserId))
@@ -151,7 +151,7 @@ public class DesignCommandServiceTests
             Name = "Test Design"
         };
 
-        var user = new User { Id = 1 };
+        var user = new Client { Id = 1 };
         var shield = new Shield { Id = 1 };
 
         _mapperMock.Setup(m => m.Map<CreateDesignCommand, Design>(command)).Returns(new Design());
@@ -181,7 +181,7 @@ public class DesignCommandServiceTests
             Name = "Test Design"
         };
 
-        var user = new User { Id = 1 };
+        var user = new Client { Id = 1 };
         var shield = new Shield { Id = 1 };
         var primaryColor = new Color { Id = 1 };
 
@@ -213,7 +213,7 @@ public class DesignCommandServiceTests
             Name = "Test Design"
         };
 
-        var user = new User { Id = 1 };
+        var user = new Client { Id = 1 };
         var shield = new Shield { Id = 1 };
         var primaryColor = new Color { Id = 1 };
         var secondaryColor = new Color { Id = 2 };
@@ -247,7 +247,7 @@ public class DesignCommandServiceTests
             Name = "Test Design"
         };
 
-        var user = new User { Id = 1 };
+        var user = new Client { Id = 1 };
         var shield = new Shield { Id = 1 };
         var primaryColor = new Color { Id = 1 };
         var secondaryColor = new Color { Id = 2 };
@@ -342,7 +342,7 @@ public class DesignCommandServiceTests
         };
 
         var designToUpdate = new Design { Id = id, Name = "Old Design" };
-        var user = new User { Id = 1 };
+        var user = new Client { Id = 1 };
 
         _designRepositoryMock.Setup(repo => repo.GetByIdAsync(id)).ReturnsAsync(designToUpdate);
         _userRepositoryMock.Setup(repo => repo.GetByIdAsync(command.UserId)).ReturnsAsync(user);
@@ -372,7 +372,7 @@ public class DesignCommandServiceTests
         };
 
         var designToUpdate = new Design { Id = id, Name = "Old Design" };
-        var user = new User { Id = 1 };
+        var user = new Client { Id = 1 };
         var shield = new Shield { Id = 1 };
 
         _designRepositoryMock.Setup(repo => repo.GetByIdAsync(id)).ReturnsAsync(designToUpdate);
@@ -404,7 +404,7 @@ public class DesignCommandServiceTests
         };
 
         var designToUpdate = new Design { Id = id, Name = "Old Design" };
-        var user = new User { Id = 1 };
+        var user = new Client { Id = 1 };
         var shield = new Shield { Id = 1 };
         var primaryColor = new Color { Id = 1 };
 
@@ -438,7 +438,7 @@ public class DesignCommandServiceTests
         };
 
         var designToUpdate = new Design { Id = id, Name = "Old Design" };
-        var user = new User { Id = 1 };
+        var user = new Client { Id = 1 };
         var shield = new Shield { Id = 1 };
         var primaryColor = new Color { Id = 1 };
         var secondaryColor = new Color { Id = 2 };
@@ -474,7 +474,7 @@ public class DesignCommandServiceTests
         };
 
         var designToUpdate = new Design { Id = id, Name = "Old Design" };
-        var user = new User { Id = 1 };
+        var user = new Client { Id = 1 };
         var shield = new Shield { Id = 1 };
         var primaryColor = new Color { Id = 1 };
         var secondaryColor = new Color { Id = 2 };

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace FitShirt.Domain.Publishing.Models.Commands;
 
@@ -8,9 +9,8 @@ public class CreatePostCommand
     [MaxLength(32)] 
     public string Name { get; set; } = null!;
 
-    [Required(ErrorMessage = "Image url field is required")]
-    [Url(ErrorMessage = "The field must be a current url")] 
-    public string Image { get; set; } = null!;
+    [Required(ErrorMessage = "Image file is required")]
+    public IFormFile Image { get; set; } = null!;
     
     [Required(ErrorMessage = "Stock field is required")]
     [Range(1, 1000, ErrorMessage = "The number field must be a positive integer")]

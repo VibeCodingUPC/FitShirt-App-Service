@@ -1,6 +1,7 @@
 using FitShirt.Domain.Security.Models.Commands;
 using FitShirt.Domain.Security.Models.Queries;
 using FitShirt.Domain.Security.Models.Responses;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Security.Services;
 using FitShirt.Presentation.Errors;
 using FitShirt.Presentation.Filter;
@@ -57,7 +58,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
-    [CustomAuthorize("Admin")]
+    [CustomAuthorize(UserRoles.ADMIN)]
     public async Task<IActionResult> GetUsersAsync()
     {
         var query = new GetAllUsersQuery();
@@ -106,6 +107,52 @@ public class UserController : ControllerBase
     {
         var command = new DeleteUserCommand() { Id = id };
         var result = await _userCommandService.Handle(command);
+        return Ok(result);
+    }
+    
+    /// GET: /api/v1/users/sellers
+    /// <summary>
+    /// Get a registered sellers list.
+    /// </summary>
+    /// <response code="200">Returns all the sellers</response>
+    /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
+    /// <response code="403">Not authorized</response>
+    /// <response code="404">If there are no users registered</response>
+    /// <response code="500">If there is an internal server error</response>
+    [HttpGet("/api/v1/users/sellers")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.CLIENT)]
+    public async Task<IActionResult> GetSellersAsync()
+    {
+        var query = new GetAllSellersQuery();
+        var result = await _userQueryService.Handle(query);
+        return Ok(result);
+    }
+    
+    /// GET: /api/v1/users/sellers/{id}
+    /// <summary>
+    /// Get a registered seller by its id
+    /// </summary>
+    /// <response code="200">Returns the seller</response>
+    /// <response code="400">If the request is wrong</response>
+    /// <response code="401">Not authenticated</response>
+    /// <response code="403">Not authorized</response>
+    /// <response code="404">If the seller was not found</response>
+    /// <response code="500">If there is an internal server error</response>
+    [HttpGet("/api/v1/users/sellers/{sellerId}")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.CLIENT)]
+    public async Task<IActionResult> GetSellerByIdAsync(int sellerId)
+    {
+        var query = new GetSellerByIdQuery(sellerId);
+        var result = await _userQueryService.Handle(query);
         return Ok(result);
     }
 }

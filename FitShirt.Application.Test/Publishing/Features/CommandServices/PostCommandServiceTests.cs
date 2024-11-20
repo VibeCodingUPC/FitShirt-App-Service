@@ -7,9 +7,14 @@ using FitShirt.Domain.Publishing.Models.Entities;
 using FitShirt.Domain.Publishing.Models.Responses;
 using FitShirt.Domain.Publishing.Repositories;
 using FitShirt.Domain.Security.Models.Aggregates;
+using FitShirt.Domain.Security.Models.Entities;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Shared.Models.Entities;
+using FitShirt.Domain.Shared.Models.ImageCloudinary;
 using FitShirt.Domain.Shared.Repositories;
+using FitShirt.Domain.Shared.Services.ImageCloudinary;
+using Microsoft.AspNetCore.Http;
 using Moq;
 
 namespace FitShirt.Application.Test.Publishing.Features.CommandServices;
@@ -22,6 +27,8 @@ public class PostCommandServiceTests
     private readonly Mock<IColorRepository> _colorRepositoryMock;
     private readonly Mock<ISizeRepository> _sizeRepositoryMock;
     private readonly Mock<IPostSizeRepository> _postSizeRepositoryMock;
+    private readonly Mock<IPostPhotoRepository> _postPhotoRepository;
+    private readonly Mock<IManageImageService> _manageImageService;
     private readonly Mock<IMapper> _mapperMock;
     private readonly PostCommandService _postCommandService;
 
@@ -33,6 +40,8 @@ public class PostCommandServiceTests
         _sizeRepositoryMock = new Mock<ISizeRepository>();
         _postRepositoryMock = new Mock<IPostRepository>();
         _postSizeRepositoryMock = new Mock<IPostSizeRepository>();
+        _postPhotoRepository = new Mock<IPostPhotoRepository>();
+        _manageImageService = new Mock<IManageImageService>();
         _mapperMock = new Mock<IMapper>();
 
         _postCommandService = new PostCommandService(
@@ -42,8 +51,26 @@ public class PostCommandServiceTests
             _categoryRepositoryMock.Object,
             _colorRepositoryMock.Object,
             _sizeRepositoryMock.Object,
-            _postSizeRepositoryMock.Object
+            _postSizeRepositoryMock.Object,
+            _manageImageService.Object,
+            _postPhotoRepository.Object
         );
+    }
+
+    private IFormFile ConstructFormFile()
+    {
+        var fileName = "testImage.jpg";
+        var contentType = "image/jpeg";
+        var fileContent = "fake image content"; // Simulación del contenido de la imagen
+        var contentStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(fileContent));
+
+        var formFile = new FormFile(contentStream, 0, contentStream.Length, "Image", fileName)
+        {
+            Headers = new HeaderDictionary(),
+            ContentType = contentType
+        };
+
+        return formFile;
     }
 
     [Fact]
@@ -56,24 +83,33 @@ public class PostCommandServiceTests
             CategoryId = 1,
             ColorId = 1,
             Name = "Test Post",
+            Image = ConstructFormFile(),
             SizeIds = new List<int> { 1, 2 }
         };
 
         var postEntity = new Post();
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User", Role = new Role(UserRoles.SELLER)};
         var category = new Category { Id = 1, Name = "Test Category" };
         var color = new Color { Id = 1, Name = "Test Color" };
         var size1 = new Size { Id = 1, Value = "Size 1" };
         var size2 = new Size { Id = 2, Value = "Size 2" };
+        var imageResponse = new ImageResponse
+        {
+            Url = "https://fakeimageurl.com/image.jpg",
+            PublicCode = "fakePublicCode"
+        };
         
         _mapperMock.Setup(m => m.Map<CreatePostCommand, Post>(command)).Returns(postEntity);
-        _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId)).ReturnsAsync(user);
+        _userRepositoryMock.Setup(r => r.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync(user);
         _categoryRepositoryMock.Setup(r => r.GetByIdAsync(command.CategoryId)).ReturnsAsync(category);
         _colorRepositoryMock.Setup(r => r.GetByIdAsync(command.ColorId)).ReturnsAsync(color);
         _sizeRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(size1);
         _sizeRepositoryMock.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(size2);
         _postRepositoryMock.Setup(r => r.GetPostByName(command.Name)).ReturnsAsync((Post)null);
-
+        
+        _manageImageService.Setup(s => s.UploadImage(It.IsAny<ImageData>())).ReturnsAsync(imageResponse);
+        _postPhotoRepository.Setup(r => r.SaveAsync(It.IsAny<PostPhoto>()));
+        
         var postSizeList = new List<PostSize>
         {
             new PostSize { SizeId = 1, Size = size1 },
@@ -110,8 +146,8 @@ public class PostCommandServiceTests
             SizeIds = new List<int> { 1, 2 }
         };
 
-        _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId))
-            .ReturnsAsync((User)null);
+        _userRepositoryMock.Setup(r => r.GetDetailedUserInformationAsync(command.UserId))
+            .ReturnsAsync((Seller)null);
 
         // Act
         var exception = await Assert.ThrowsAsync<NotFoundEntityIdException>(() => _postCommandService.Handle(command));
@@ -134,10 +170,10 @@ public class PostCommandServiceTests
             SizeIds = new List<int> { 1, 2 }
         };
 
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User", Role = new Role(UserRoles.SELLER)};
 
         _mapperMock.Setup(m => m.Map<CreatePostCommand, Post>(command)).Returns(new Post());
-        _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId)).ReturnsAsync(user);
+        _userRepositoryMock.Setup(r => r.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync(user);
         _categoryRepositoryMock.Setup(r => r.GetByIdAsync(command.CategoryId)).ReturnsAsync((Category)null);
 
         // Act
@@ -161,11 +197,11 @@ public class PostCommandServiceTests
             SizeIds = new List<int> { 1, 2 }
         };
 
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User", Role = new Role(UserRoles.SELLER)};
         var category = new Category { Id = 1, Name = "Test Category" };
 
         _mapperMock.Setup(m => m.Map<CreatePostCommand, Post>(command)).Returns(new Post());
-        _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId)).ReturnsAsync(user);
+        _userRepositoryMock.Setup(r => r.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync(user);
         _categoryRepositoryMock.Setup(r => r.GetByIdAsync(command.CategoryId)).ReturnsAsync(category);
         _colorRepositoryMock.Setup(r => r.GetByIdAsync(command.ColorId)).ReturnsAsync((Color)null);
 
@@ -190,13 +226,13 @@ public class PostCommandServiceTests
             SizeIds = new List<int> { 1, 2 }
         };
 
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User", Role = new Role(UserRoles.SELLER)};
         var category = new Category { Id = 1, Name = "Test Category" };
         var color = new Color { Id = 1, Name = "Test Color" };
         var size1 = new Size { Id = 1, Value = "Size 1" };
 
         _mapperMock.Setup(m => m.Map<CreatePostCommand, Post>(command)).Returns(new Post());
-        _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId)).ReturnsAsync(user);
+        _userRepositoryMock.Setup(r => r.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync(user);
         _categoryRepositoryMock.Setup(r => r.GetByIdAsync(command.CategoryId)).ReturnsAsync(category);
         _colorRepositoryMock.Setup(r => r.GetByIdAsync(command.ColorId)).ReturnsAsync(color);
         _sizeRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(size1);
@@ -223,7 +259,7 @@ public class PostCommandServiceTests
             SizeIds = new List<int> { 1, 2 }
         };
 
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User", Role = new Role(UserRoles.SELLER)};
         var category = new Category { Id = 1, Name = "Test Category" };
         var color = new Color { Id = 1, Name = "Test Color" };
         var size1 = new Size { Id = 1, Value = "Size 1" };
@@ -231,7 +267,7 @@ public class PostCommandServiceTests
         var existingPost = new Post { Name = "Test Post" };
 
         _mapperMock.Setup(m => m.Map<CreatePostCommand, Post>(command)).Returns(new Post());
-        _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId)).ReturnsAsync(user);
+        _userRepositoryMock.Setup(r => r.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync(user);
         _categoryRepositoryMock.Setup(r => r.GetByIdAsync(command.CategoryId)).ReturnsAsync(category);
         _colorRepositoryMock.Setup(r => r.GetByIdAsync(command.ColorId)).ReturnsAsync(color);
         _sizeRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(size1);
@@ -257,25 +293,32 @@ public class PostCommandServiceTests
             UserId = 1,
             CategoryId = 1,
             ColorId = 1,
+            Image = ConstructFormFile(),
             Name = "Updated Post",
             SizeIds = new List<int> { 1, 2 }
         };
 
         var postToUpdate = new Post { Id = id, Name = "Original Post" };
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User", Role = new Role(UserRoles.SELLER)};
         var category = new Category { Id = 1, Name = "Test Category" };
         var color = new Color { Id = 1, Name = "Test Color" };
         var size1 = new Size { Id = 1, Value = "Size 1" };
         var size2 = new Size { Id = 2, Value = "Size 2" };
+        var postPhoto = new PostPhoto { Id = 1 };
+        var imageResponse = new ImageResponse
+        {
+            Url = "https://fakeimageurl.com/image.jpg",
+            PublicCode = "fakePublicCode"
+        };
 
         _postRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(postToUpdate);
-        _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId)).ReturnsAsync(user);
+        _userRepositoryMock.Setup(r => r.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync(user);
         _categoryRepositoryMock.Setup(r => r.GetByIdAsync(command.CategoryId)).ReturnsAsync(category);
         _colorRepositoryMock.Setup(r => r.GetByIdAsync(command.ColorId)).ReturnsAsync(color);
         _sizeRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(size1);
         _sizeRepositoryMock.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(size2);
         _postRepositoryMock.Setup(r => r.GetPostByName(command.Name)).ReturnsAsync((Post)null);
-
+        
         _mapperMock.Setup(m => m.Map(command, postToUpdate, typeof(UpdatePostCommand), typeof(Post)));
 
         var postSizeList = new List<PostSize>
@@ -287,6 +330,13 @@ public class PostCommandServiceTests
         postToUpdate.PostSizes = postSizeList;
 
         _postSizeRepositoryMock.Setup(r => r.DeleteByPostIdAsync(id));
+
+        _postPhotoRepository.Setup(r => r.GetPostPhotoByPostId(postToUpdate.Id)).ReturnsAsync(postPhoto);
+        _postPhotoRepository.Setup(r => r.DeleteAsync(postPhoto.Id));
+        
+        _manageImageService.Setup(s => s.UploadImage(It.IsAny<ImageData>())).ReturnsAsync(imageResponse);
+        _postPhotoRepository.Setup(r => r.SaveAsync(It.IsAny<PostPhoto>()));
+        
         _postRepositoryMock.Setup(r => r.ModifyAsync(postToUpdate));
 
         var postResponse = new PostResponse();
@@ -341,7 +391,7 @@ public class PostCommandServiceTests
         var postToUpdate = new Post { Id = id, Name = "Original Post" };
 
         _postRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(postToUpdate);
-        _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId)).ReturnsAsync((User)null);
+        _userRepositoryMock.Setup(r => r.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync((User)null);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<NotFoundEntityIdException>(() => _postCommandService.Handle(id, command));
@@ -364,10 +414,10 @@ public class PostCommandServiceTests
         };
 
         var postToUpdate = new Post { Id = id, Name = "Original Post" };
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User", Role = new Role(UserRoles.SELLER)};
 
         _postRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(postToUpdate);
-        _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId)).ReturnsAsync(user);
+        _userRepositoryMock.Setup(r => r.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync(user);
         _categoryRepositoryMock.Setup(r => r.GetByIdAsync(command.CategoryId)).ReturnsAsync((Category)null);
 
         // Act & Assert
@@ -391,11 +441,11 @@ public class PostCommandServiceTests
         };
 
         var postToUpdate = new Post { Id = id, Name = "Original Post" };
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User", Role = new Role(UserRoles.SELLER)};
         var category = new Category { Id = 1, Name = "Test Category" };
 
         _postRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(postToUpdate);
-        _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId)).ReturnsAsync(user);
+        _userRepositoryMock.Setup(r => r.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync(user);
         _categoryRepositoryMock.Setup(r => r.GetByIdAsync(command.CategoryId)).ReturnsAsync(category);
         _colorRepositoryMock.Setup(r => r.GetByIdAsync(command.ColorId)).ReturnsAsync((Color)null);
 
@@ -420,13 +470,13 @@ public class PostCommandServiceTests
         };
 
         var postToUpdate = new Post { Id = id, Name = "Original Post" };
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User", Role = new Role(UserRoles.SELLER)};
         var category = new Category { Id = 1, Name = "Test Category" };
         var color = new Color { Id = 1, Name = "Test Color" };
         var size1 = new Size { Id = 1, Value = "Size 1" };
 
         _postRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(postToUpdate);
-        _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId)).ReturnsAsync(user);
+        _userRepositoryMock.Setup(r => r.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync(user);
         _categoryRepositoryMock.Setup(r => r.GetByIdAsync(command.CategoryId)).ReturnsAsync(category);
         _colorRepositoryMock.Setup(r => r.GetByIdAsync(command.ColorId)).ReturnsAsync(color);
         _sizeRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(size1);
@@ -453,7 +503,7 @@ public class PostCommandServiceTests
         };
 
         var postToUpdate = new Post { Id = id, Name = "Original Post" };
-        var user = new User { Id = 1, Name = "Test User" };
+        var user = new Seller { Id = 1, Name = "Test User", Role = new Role(UserRoles.SELLER)};
         var category = new Category { Id = 1, Name = "Test Category" };
         var color = new Color { Id = 1, Name = "Test Color" };
         var size1 = new Size { Id = 1, Value = "Size 1" };
@@ -461,7 +511,7 @@ public class PostCommandServiceTests
         var existingPost = new Post { Name = "Updated Post" };
 
         _postRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(postToUpdate);
-        _userRepositoryMock.Setup(r => r.GetByIdAsync(command.UserId)).ReturnsAsync(user);
+        _userRepositoryMock.Setup(r => r.GetDetailedUserInformationAsync(command.UserId)).ReturnsAsync(user);
         _categoryRepositoryMock.Setup(r => r.GetByIdAsync(command.CategoryId)).ReturnsAsync(category);
         _colorRepositoryMock.Setup(r => r.GetByIdAsync(command.ColorId)).ReturnsAsync(color);
         _sizeRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(size1);
@@ -481,9 +531,13 @@ public class PostCommandServiceTests
         // Arrange
         var command = new DeletePostCommand { Id = 1 };
         var post = new Post { Id = 1, Name = "Test Post" };
+        var postPhoto = new PostPhoto { Id = 1 };
 
         _postRepositoryMock.Setup(r => r.GetByIdAsync(command.Id)).ReturnsAsync(post);
         _postRepositoryMock.Setup(r => r.DeleteAsync(command.Id)).ReturnsAsync(true);
+        
+        _postPhotoRepository.Setup(r => r.GetPostPhotoByPostId(post.Id)).ReturnsAsync(postPhoto);
+        _postPhotoRepository.Setup(r => r.DeleteAsync(postPhoto.Id));
 
         // Act
         var result = await _postCommandService.Handle(command);
@@ -493,7 +547,7 @@ public class PostCommandServiceTests
     }
     
     [Fact]
-    public async Task Handle_PostNotFound_ThrowsNotFoundEntityIdException()
+    public async Task HandleDeletePost_PostNotFound_ThrowsNotFoundEntityIdException()
     {
         // Arrange
         var command = new DeletePostCommand { Id = 1 };

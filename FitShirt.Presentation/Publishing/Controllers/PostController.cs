@@ -2,8 +2,10 @@ using FitShirt.Domain.Publishing.Models.Commands;
 using FitShirt.Domain.Publishing.Models.Queries;
 using FitShirt.Domain.Publishing.Models.Responses;
 using FitShirt.Domain.Publishing.Services;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Shared.Models.Responses;
 using FitShirt.Presentation.Errors;
+using FitShirt.Presentation.Filter;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -77,6 +79,7 @@ public class PostController : ControllerBase
     /// <response code="404">If there are no posts</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(IReadOnlyCollection<ShirtResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
@@ -147,7 +150,8 @@ public class PostController : ControllerBase
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> PostPostAsync([FromBody] CreatePostCommand command)
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.SELLER)]
+    public async Task<IActionResult> PostPostAsync([FromForm] CreatePostCommand command)
     {
         var result = await _postCommandService.Handle(command);
         return StatusCode(StatusCodes.Status201Created, result);
@@ -187,7 +191,8 @@ public class PostController : ControllerBase
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> PutPostAsync(int id, [FromBody] UpdatePostCommand command)
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.SELLER)]
+    public async Task<IActionResult> PutPostAsync(int id, [FromForm] UpdatePostCommand command)
     {
         var result = await _postCommandService.Handle(id, command);
         return Ok(result);
@@ -207,6 +212,7 @@ public class PostController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.SELLER)]
     public async Task<IActionResult> DeletePostAsync(int id)
     {
         var command = new DeletePostCommand { Id = id };

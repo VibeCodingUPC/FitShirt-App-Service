@@ -27,7 +27,7 @@ public class PostQueryService : IPostQueryService
 
     public async Task<IReadOnlyCollection<ShirtResponse>> Handle(GetAllPostsQuery query)
     {
-        var data = await _postRepository.GetAllAsync();
+        var data = await _postRepository.GetShirtsAsync();
 
         if (data.Count == 0)
         {

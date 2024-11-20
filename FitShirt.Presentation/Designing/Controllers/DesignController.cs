@@ -2,6 +2,7 @@ using FitShirt.Domain.Designing.Models.Commands;
 using FitShirt.Domain.Designing.Models.Queries;
 using FitShirt.Domain.Designing.Models.Responses;
 using FitShirt.Domain.Designing.Services;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Shared.Models.Responses;
 using FitShirt.Presentation.Errors;
 using FitShirt.Presentation.Filter;
@@ -34,7 +35,7 @@ public class DesignController : ControllerBase
     /// <response code="404">If there are no posts</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpGet]
-    [CustomAuthorize("Admin")]
+    [CustomAuthorize(UserRoles.ADMIN)]
     [ProducesResponseType(typeof(IReadOnlyCollection<ShirtResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
@@ -56,6 +57,7 @@ public class DesignController : ControllerBase
     /// <response code="404">If there is not any posts</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpGet("{id}")]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.CLIENT)]
     [ProducesResponseType(typeof(DesignResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
@@ -78,6 +80,7 @@ public class DesignController : ControllerBase
     /// <response code="404">If there are no posts</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpGet]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.CLIENT, UserRoles.SELLER)]
     [ProducesResponseType(typeof(IReadOnlyCollection<ShirtResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
@@ -116,6 +119,7 @@ public class DesignController : ControllerBase
     /// <response code="409">If there is any conflict</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpPost]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.CLIENT)]
     [ProducesResponseType(typeof(DesignResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
@@ -152,6 +156,7 @@ public class DesignController : ControllerBase
     /// <response code="409">If there is any conflict</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpPut("{id}")]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.CLIENT)]
     [ProducesResponseType(typeof(DesignResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]
@@ -173,6 +178,7 @@ public class DesignController : ControllerBase
     /// <response code="404">If there is no post</response>
     /// <response code="500">If there is an internal server error</response>
     [HttpDelete("{id}")]
+    [CustomAuthorize(UserRoles.ADMIN, UserRoles.CLIENT)]
     [ProducesResponseType(typeof(DesignResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(CodeErrorResponse), StatusCodes.Status404NotFound)]

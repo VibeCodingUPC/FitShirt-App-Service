@@ -8,6 +8,7 @@ using FitShirt.Domain.Designing.Models.Responses;
 using FitShirt.Domain.Designing.Repositories;
 using FitShirt.Domain.Designing.Services;
 using FitShirt.Domain.Security.Models.Aggregates;
+using FitShirt.Domain.Security.Models.ValueObjects;
 using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Shared.Repositories;
 
@@ -34,12 +35,15 @@ public class DesignCommandService : IDesignCommandService
     {
         var designEntity = _mapper.Map<CreateDesignCommand, Design>(command);
 
-        var user = await _userRepository.GetByIdAsync(command.UserId);
+        var user = await _userRepository.GetDetailedUserInformationAsync(command.UserId);
         if (user == null)
         {
             throw new NotFoundEntityIdException(nameof(User), command.UserId);
         }
-
+        if (user.Role.Name == UserRoles.SELLER)
+        {
+            throw new ArgumentException("Sellers are not allowed to create designs");
+        }
         designEntity.User = user;
 
         var shield = await _shieldRepository.GetByIdAsync(command.ShieldId);
@@ -79,8 +83,16 @@ public class DesignCommandService : IDesignCommandService
         {
             throw new DuplicatedEntityAttributeException(nameof(Design), nameof(Design.Name),command.Name);
         }
-        designEntity.Image =
-            "https://cdn.discordapp.com/attachments/998840308617990165/1255112048505782272/camiseta-personalizada.png?ex=667bf1af&is=667aa02f&hm=978944d8cba0e7f4e4de0e9f8404ee2fce9730918ce3c61a4c2aac1f3d182a84&";
+
+        if (command.imageUrl == null)
+        {
+            designEntity.Image =
+                "https://static.vecteezy.com/system/resources/previews/021/095/974/non_2x/white-t-shirt-free-png.png";
+        }
+        else
+        {
+            designEntity.Image = command.imageUrl;
+        }
 
         await _designRepository.SaveAsync(designEntity);
 
@@ -97,10 +109,15 @@ public class DesignCommandService : IDesignCommandService
         {
             throw new NotFoundEntityIdException(nameof(Design), id);
         }
-        var user = await _userRepository.GetByIdAsync(command.UserId);
+        
+        var user = await _userRepository.GetDetailedUserInformationAsync(command.UserId);
         if (user == null)
         {
             throw new NotFoundEntityIdException(nameof(User), command.UserId);
+        }
+        if (user.Role.Name == UserRoles.SELLER)
+        {
+            throw new ArgumentException("Sellers are not allowed to create designs");
         }
 
         var shield = await _shieldRepository.GetByIdAsync(command.ShieldId);

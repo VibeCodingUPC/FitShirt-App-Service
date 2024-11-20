@@ -20,6 +20,8 @@ public class DesignRepository : BaseRepository<Design>, IDesignRepository
             .Include(design => design.SecondaryColor)
             .Include(design => design.TertiaryColor)
             .Include(design => design.Shield)
+            .Include(design => design.User)
+                .ThenInclude(user => user.Role)
             .FirstOrDefaultAsync();
     }
 

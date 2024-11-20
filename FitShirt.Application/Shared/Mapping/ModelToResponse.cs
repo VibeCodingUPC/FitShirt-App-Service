@@ -2,6 +2,8 @@ using AutoMapper;
 using FitShirt.Domain.Designing.Models.Aggregates;
 using FitShirt.Domain.Designing.Models.Entities;
 using FitShirt.Domain.Designing.Models.Responses;
+using FitShirt.Domain.OrderManagement.Models.Aggregates;
+using FitShirt.Domain.OrderManagement.Models.Responses;
 using FitShirt.Domain.Publishing.Models.Aggregates;
 using FitShirt.Domain.Publishing.Models.Entities;
 using FitShirt.Domain.Publishing.Models.Responses;
@@ -19,12 +21,24 @@ public class ModelToResponse : Profile
 {
     public ModelToResponse()
     {
-        CreateMap<Post, PostResponse>();
-        CreateMap<Post, ShirtResponse>();
+        CreateMap<Post, PostResponse>()
+            .AfterMap((p, pr) =>
+            {
+                pr.Image = p.PostPhoto.Url;
+            });
+        CreateMap<Post, ShirtResponse>()
+            .AfterMap((p, sr) =>
+            {
+                sr.Image = p.PostPhoto.Url;
+            });
         CreateMap<Category, CategoryResponse>();
         CreateMap<Color, ColorResponse>();
         CreateMap<Category, CategoryResponse>();
-        CreateMap<User, UserResponse>();
+        CreateMap<User, UserResponse>()
+            .AfterMap((u, ur) =>
+            {
+                ur.Role = u.Role.GetStringName();
+            });
         CreateMap<PostSize, PostSizeResponse>();
         CreateMap<Size, SizeResponse>();
         CreateMap<Design, DesignResponse>();
@@ -32,5 +46,10 @@ public class ModelToResponse : Profile
         CreateMap<Shield, ShieldResponse>();
         CreateMap<Purchase, PurchaseResponse>();
         CreateMap<Item, ItemResponse>();
+        CreateMap<DesignOrder, DesignOrderResponse>()
+            .AfterMap((d, dr) =>
+            {
+                dr.Status = d.Status.ToString();
+            });
     }
 }
