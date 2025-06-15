@@ -14,144 +14,117 @@ namespace FitShirt.Infrastructure.Shared.Contexts;
 
 public static class FitShirtDbContextSeed
 {
+    private static async Task<List<T>> LoadJsonAsync<T>(string relativePath)
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, relativePath);
+
+        if (!File.Exists(path))
+            throw new FileNotFoundException($"Archivo no encontrado: {path}");
+
+        var json = await File.ReadAllTextAsync(path);
+        var list = JsonConvert.DeserializeObject<List<T>>(json);
+
+        if (list == null)
+            throw new Exception($"No se pudo deserializar el archivo: {path}");
+
+        return list;
+    }
+
     private static async Task LoadRolesDataAsync(FitShirtDbContext context)
     {
-        try
+        if (!context.Roles.Any())
         {
-            if (!context.Roles.Any())
-            {
-                var roles = Enum.GetValues(typeof(UserRoles))
-                    .Cast<UserRoles>()
-                    .Select(role => new Role(role))
-                    .ToList();
+            var roles = Enum.GetValues(typeof(UserRoles))
+                .Cast<UserRoles>()
+                .Select(role => new Role(role))
+                .ToList();
 
-                context.Roles.AddRange(roles!);
-                await context.SaveChangesAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Error saving roles in database");
+            context.Roles.AddRange(roles);
+            await context.SaveChangesAsync();
         }
     }
-    
+
     private static async Task LoadCategoriesDataAsync(FitShirtDbContext context)
     {
-        try
+        if (!context.Categories.Any())
         {
-            if (!context.Categories.Any())
-            {
-                var categoriesData = File.ReadAllText("../FitShirt.Infrastructure/Shared/Data/categories.json");
-
-                var categories = JsonConvert.DeserializeObject<List<Category>>(categoriesData);
-
-                context.Categories.AddRange(categories!);
-                await context.SaveChangesAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Error saving categories in database");
+            var categories = await LoadJsonAsync<Category>("Shared/Data/categories.json");
+            context.Categories.AddRange(categories);
+            await context.SaveChangesAsync();
         }
     }
-    
+
     private static async Task LoadColorsDataAsync(FitShirtDbContext context)
     {
-        try
+        if (!context.Colors.Any())
         {
-            if (!context.Colors.Any())
-            {
-                var colorsData = File.ReadAllText("../FitShirt.Infrastructure/Shared/Data/colors.json");
-
-                var colors = JsonConvert.DeserializeObject<List<Color>>(colorsData);
-
-                context.Colors.AddRange(colors!);
-                await context.SaveChangesAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Error saving colors in database");
+            var colors = await LoadJsonAsync<Color>("Shared/Data/colors.json");
+            context.Colors.AddRange(colors);
+            await context.SaveChangesAsync();
         }
     }
-    
+
     private static async Task LoadSizesDataAsync(FitShirtDbContext context)
     {
-        try
+        if (!context.Sizes.Any())
         {
-            if (!context.Sizes.Any())
-            {
-                var sizesData = await File.ReadAllTextAsync("../FitShirt.Infrastructure/Shared/Data/sizes.json");
-
-                var sizes = JsonConvert.DeserializeObject<List<Size>>(sizesData);
-
-                context.Sizes.AddRange(sizes!);
-                await context.SaveChangesAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Error saving sizes in database");
+            var sizes = await LoadJsonAsync<Size>("Shared/Data/sizes.json");
+            context.Sizes.AddRange(sizes);
+            await context.SaveChangesAsync();
         }
     }
-    
+
     private static async Task LoadShieldsDataAsync(FitShirtDbContext context)
     {
-        try
+        if (!context.Shields.Any())
         {
-            if (!context.Shields.Any())
-            {
-                var shieldData = await File.ReadAllTextAsync("../FitShirt.Infrastructure/Shared/Data/shields.json");
-
-                var shields = JsonConvert.DeserializeObject<List < Shield >> (shieldData);
-                
-                context.Shields.AddRange(shields!);
-                await context.SaveChangesAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Error saving shields in database");
+            var shields = await LoadJsonAsync<Shield>("Shared/Data/shields.json");
+            context.Shields.AddRange(shields);
+            await context.SaveChangesAsync();
         }
     }
-    
+
     private static async Task LoadUsersDataAsync(FitShirtDbContext context)
     {
+        if (!context.Users.Any())
+        {
+            var adminRole = await context.Roles
+                .FirstOrDefaultAsync(r => r.Name == UserRoles.ADMIN);
+
+            if (adminRole == null)
+                throw new Exception("Rol ADMIN no encontrado para crear el usuario");
+
+            var user = new Admin
+            {
+                Name = "Diego",
+                Lastname = "Defilippi",
+                Username = "Diego_DefSan",
+                Password = "$2a$10$p3LBQP5dB7T.67zXLliMPO55Er5.EX1TsizV3fLBXCF4hxB2wGdUq",
+                Email = "ddefsan@test.com",
+                Cellphone = "999999999",
+                RoleId = adminRole.Id
+            };
+
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
+        }
+    }
+
+    public static async Task LoadDataAsync(FitShirtDbContext context)
+    {
         try
         {
-            if (!context.Users.Any())
-            {
-                var adminRole = await context.Roles
-                    .FirstOrDefaultAsync(r => r.Name == UserRoles.ADMIN);
-
-                var user = new Admin
-                {
-                    Name = "Diego",
-                    Lastname = "Defilippi",
-                    Username = "Diego_DefSan",
-                    Password = "$2a$10$p3LBQP5dB7T.67zXLliMPO55Er5.EX1TsizV3fLBXCF4hxB2wGdUq",
-                    Email = "ddefsan@test.com",
-                    Cellphone = "999999999",
-                    RoleId = adminRole!.Id
-                };
-
-                context.Users.Add(user);
-                await context.SaveChangesAsync();
-            }
+            await LoadRolesDataAsync(context);
+            await LoadCategoriesDataAsync(context);
+            await LoadColorsDataAsync(context);
+            await LoadSizesDataAsync(context);
+            await LoadShieldsDataAsync(context);
+            await LoadUsersDataAsync(context);
         }
         catch (Exception ex)
         {
-            throw new Exception("Error saving users in database");
+            Console.WriteLine($"❌ Error durante carga de datos iniciales: {ex.Message}");
+            throw;
         }
-    }
-    
-    public static async Task LoadDataAsync(FitShirtDbContext context)
-    {
-        await LoadRolesDataAsync(context);
-        await LoadCategoriesDataAsync(context);
-        await LoadColorsDataAsync(context);
-        await LoadSizesDataAsync(context);
-        await LoadShieldsDataAsync(context);
-        await LoadUsersDataAsync(context);
     }
 }
