@@ -10,4 +10,9 @@
       <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.2.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Messaging\Models\Entities\" />
+      <Folder Include="Messaging\Models\Queries\" />
+    </ItemGroup>
+
 </Project>

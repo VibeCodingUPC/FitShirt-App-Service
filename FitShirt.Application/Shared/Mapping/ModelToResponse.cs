@@ -2,6 +2,8 @@ using AutoMapper;
 using FitShirt.Domain.Designing.Models.Aggregates;
 using FitShirt.Domain.Designing.Models.Entities;
 using FitShirt.Domain.Designing.Models.Responses;
+using FitShirt.Domain.Messaging.Models.Aggregates;
+using FitShirt.Domain.Messaging.Models.Responses;
 using FitShirt.Domain.OrderManagement.Models.Aggregates;
 using FitShirt.Domain.OrderManagement.Models.Responses;
 using FitShirt.Domain.Publishing.Models.Aggregates;
@@ -34,6 +36,7 @@ public class ModelToResponse : Profile
         CreateMap<Category, CategoryResponse>();
         CreateMap<Color, ColorResponse>();
         CreateMap<Category, CategoryResponse>();
+        CreateMap<Message, MessageResponse>();
         CreateMap<User, UserResponse>()
             .AfterMap((u, ur) =>
             {
