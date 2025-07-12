@@ -1,5 +1,6 @@
 using FitShirt.Domain.Designing.Models.Aggregates;
 using FitShirt.Domain.Designing.Models.Entities;
+using FitShirt.Domain.Messaging.Models.Aggregates;
 using FitShirt.Domain.OrderManagement.Models.Aggregates;
 using FitShirt.Domain.OrderManagement.Models.ValueObjects;
 using FitShirt.Domain.Publishing.Models.Aggregates;
@@ -135,6 +136,30 @@ public class FitShirtDbContext : DbContext
             .IsRequired(true)
             .OnDelete(DeleteBehavior.Restrict);
         
+        //---Message
+        builder.Entity<Message>(entity =>
+        {
+            entity.HasKey(m => m.Id);
+
+            entity.Property(m => m.Content)
+                .IsRequired()
+                .HasMaxLength(1000);
+
+            entity.Property(m => m.SentAt)
+                .IsRequired();
+
+            entity.HasOne(m => m.Sender)
+                .WithMany()
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(m => m.Receiver)
+                .WithMany()
+                .HasForeignKey(m => m.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+        
+        
         //----
         builder.Entity<DesignOrder>()
             .Property(d => d.Status)
@@ -164,6 +189,8 @@ public class FitShirtDbContext : DbContext
     public DbSet<PostSize> PostSizes { get; set; }
     
     public DbSet<Design> Designs { get; set; }
+    
+    public DbSet<Message> Messages { get; set; }
     public DbSet<Shield> Shields { get; set; }
     
     public DbSet<Color> Colors { get; set; }

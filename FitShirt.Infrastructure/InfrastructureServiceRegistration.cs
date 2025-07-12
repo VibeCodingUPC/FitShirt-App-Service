@@ -1,4 +1,5 @@
 using FitShirt.Domain.Designing.Repositories;
+using FitShirt.Domain.Messaging.Repositories;
 using FitShirt.Domain.OrderManagement.Repositories;
 using FitShirt.Domain.Publishing.Repositories;
 using FitShirt.Domain.Purchasing.Repositories;
@@ -6,6 +7,7 @@ using FitShirt.Domain.Security.Repositories;
 using FitShirt.Domain.Shared.Models.ImageCloudinary;
 using FitShirt.Domain.Shared.Repositories;
 using FitShirt.Infrastructure.Designing.Persistence;
+using FitShirt.Infrastructure.Messaging.Persistence;
 using FitShirt.Infrastructure.OrderManagement.Persistence;
 using FitShirt.Infrastructure.Publishing.Persistence;
 using FitShirt.Infrastructure.Purchasing.Persistence;
@@ -34,6 +36,7 @@ public static class InfrastructureServiceRegistration
 
         // Add repositories injection
         services.AddScoped<IDesignRepository, DesignRepository>();
+        services.AddScoped<IMessageRepository, MessageRepository>();
         services.AddScoped<IShieldRepository, ShieldRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IPostRepository, PostRepository>();

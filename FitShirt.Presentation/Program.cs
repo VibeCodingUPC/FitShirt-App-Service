@@ -1,8 +1,12 @@
 using System.Reflection;
 using FitShirt.Application;
+using FitShirt.Application.Messaging.Features.CommandServices;
+using FitShirt.Domain.Messaging.Repositories;
+using FitShirt.Domain.Messaging.Services;
 using FitShirt.Domain.Shared.Models.ImageCloudinary;
 using FitShirt.Domain.Shared.Services.ImageCloudinary;
 using FitShirt.Infrastructure;
+using FitShirt.Infrastructure.Messaging.Persistence;
 using FitShirt.Infrastructure.Shared.Contexts;
 using FitShirt.Infrastructure.Shared.ImageCloudinary.Services;
 using FitShirt.Presentation.Middleware;
@@ -62,6 +66,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddScoped<IManageImageService, ManageImageService>();
+builder.Services.AddScoped<IMessageCommandService, MessageCommandService>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
 var app = builder.Build();
 
